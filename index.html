@@ -1,17 +1,533 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <title>Kuzey Kantarcioglu</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kuzey Kantarcıoğlu</title>
+<meta name="description" content="Stanford CS student working on robot learning, reinforcement learning and GPU inference.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EDF1F3; --surface:#FFFFFF; --ink:#16202B; --muted:#55626F;
+  --line:#CBD4DB; --accent:#0E6F69; --accent-soft:#D4ECE9; --joint:#C2481B;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121820; --surface:#1A222C; --ink:#E4E9EE; --muted:#97A3AF;
+    --line:#2C3743; --accent:#5ACFC4; --accent-soft:#16312F; --joint:#F08A5D;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121820; --surface:#1A222C; --ink:#E4E9EE; --muted:#97A3AF;
+  --line:#2C3743; --accent:#5ACFC4; --accent-soft:#16312F; --joint:#F08A5D;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:400 1.0625rem/1.6 "Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-underline-offset:.18em;text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+h1,h2,h3{font-family:"Bricolage Grotesque","Public Sans",system-ui,sans-serif;line-height:1.1;margin:0}
+h1{font-size:clamp(2.6rem,7vw,4.6rem);font-weight:700;letter-spacing:-.025em;font-variation-settings:"opsz" 96}
+h2{font-size:clamp(1.6rem,3.4vw,2.1rem);font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.2rem;font-weight:500}
+p{margin:0 0 1em}
+.wrap{max-width:1080px;margin:0 auto;padding:0 clamp(1.25rem,4vw,2.5rem)}
+
+/* nav */
+nav{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.25rem 0;flex-wrap:wrap}
+nav .me{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;text-decoration:none;color:var(--ink)}
+nav ul{display:flex;gap:1.25rem;list-style:none;margin:0;padding:0;flex-wrap:wrap}
+nav ul a{color:var(--muted);text-decoration:none;font-size:.95rem}
+nav ul a:hover{color:var(--ink)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(1.5rem,4vw,3.5rem);align-items:center;padding:clamp(2rem,6vw,4.5rem) 0 clamp(2.5rem,6vw,5rem)}
+.hero .lede{font-size:1.2rem;color:var(--muted);max-width:34ch;margin-top:1.25rem}
+.hero .links{display:flex;gap:1.25rem;flex-wrap:wrap;margin-top:1.75rem;font-weight:600}
+.stage{position:relative;aspect-ratio:1/1;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;touch-action:none}
+.stage canvas{display:block;width:100%;height:100%;cursor:crosshair}
+.stage figcaption{position:absolute;left:1rem;bottom:.8rem;right:1rem;font-size:.82rem;color:var(--muted)}
+
+/* sections */
+section{padding:clamp(2.5rem,6vw,4.5rem) 0;border-top:1px solid var(--line)}
+.sec-head{display:grid;grid-template-columns:minmax(180px,1fr) 2.6fr;gap:2rem}
+.sec-head > h2{position:sticky;top:calc(env(safe-area-inset-top,0px) + 1.5rem);align-self:start}
+.prose{max-width:66ch}
+
+/* research */
+.interests{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.25rem 0 2rem;padding:0;list-style:none}
+.interests li{background:var(--accent-soft);color:var(--ink);padding:.3rem .8rem;border-radius:999px;font-size:.92rem}
+.lab{padding:1.5rem 0;border-bottom:1px solid var(--line)}
+.lab:last-child{border-bottom:0}
+
+/* entries */
+.entry{display:grid;grid-template-columns:1fr auto;gap:.25rem 1.5rem;padding:1.5rem 0;border-bottom:1px solid var(--line)}
+.entry:first-child{padding-top:0}
+.entry:last-child{border-bottom:0}
+.entry .when{color:var(--muted);font-size:.92rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.entry .org{color:var(--muted);margin-bottom:.6rem}
+.entry ul{margin:.25rem 0 0;padding-left:1.1rem;grid-column:1/-1}
+.entry li{margin:.35rem 0}
+.entry .more{grid-column:1/-1;margin-top:.6rem;display:flex;gap:1.25rem;flex-wrap:wrap;font-weight:600;font-size:.95rem}
+
+.entry.flat{padding:0;border:0}
+.badge{display:inline-block;vertical-align:middle;font-family:"Public Sans",sans-serif;font-size:.75rem;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:.1rem .55rem;margin-left:.35rem}
+.entry h3 + .when:empty{display:none}
+.affil{margin:0 0 1.5rem;padding:1.25rem 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.affil ul{list-style:none;margin:.6rem 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.4rem 2rem}
+/* projects */
+.featured{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:clamp(1.25rem,3vw,2rem);margin-bottom:1.5rem}
+.featured .stats{display:flex;gap:2rem;flex-wrap:wrap;margin:1rem 0}
+.featured .stats div{font-size:.9rem;color:var(--muted)}
+.featured .stats b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:1.6rem;color:var(--ink)}
+.tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.75rem;padding:0;list-style:none}
+.tags li{font-size:.82rem;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:.1rem .5rem}
+
+.smaller{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.25rem 2rem;margin-top:2rem}
+.smaller a{font-weight:600}
+.smaller p{color:var(--muted);font-size:.95rem;margin:.25rem 0 0}
+
+/* honors / contact */
+.honors{list-style:none;margin:0;padding:0}
+.honors li{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 0;border-bottom:1px solid var(--line)}
+.honors li span:last-child{color:var(--muted);white-space:nowrap}
+footer{padding:2.5rem 0 3rem;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .stage{max-width:460px;width:100%;aspect-ratio:4/3}
+  .sec-head{grid-template-columns:1fr;gap:1.25rem}
+  .sec-head > h2{position:static}
+  .entry{grid-template-columns:1fr}
+}
+</style>
 </head>
-
 <body>
+<div class="wrap">
+  <nav aria-label="Main">
+    <a class="me" href="#top">Kuzey Kantarcıoğlu</a>
+    <ul>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#teaching">Teaching</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
 
+  <header class="hero" id="top">
+    <div>
+      <h1>Kuzey Kantarcıoğlu</h1>
+      <p class="lede">I study computer science at Stanford and work on robots that learn from people, and on the GPU code that lets them act fast enough to matter.</p>
+      <div class="links">
+        <a href="https://github.com/kuzeykantarcioglu">GitHub</a>
+        <a href="https://linkedin.com/in/kkuzey">LinkedIn</a>
+        <a href="mailto:kuzey@stanford.edu">Email</a>
+        <!-- TODO: add resume.pdf to the repo, then uncomment -->
+        <!-- <a href="resume.pdf">Resume</a> -->
+      </div>
+    </div>
+    <figure class="stage" style="margin:0">
+      <canvas id="arm" aria-label="A two-joint robot arm that reaches toward your pointer"></canvas>
+      <figcaption>Move your pointer or tap: the arm solves inverse kinematics to reach it.</figcaption>
+    </figure>
+  </header>
+</div>
 
+<section id="research">
+  <div class="wrap sec-head">
+    <h2>Research</h2>
+    <div>
+      <div class="prose">
+        <p>I’m interested in how robots can recover when things go wrong. Most of my work sits where learning meets deployment: policies that take a human’s correction and improve from it, stay steady when the scene shifts, and run on real hardware at real control rates.</p>
+      </div>
+      <ul class="interests" aria-label="Interests">
+        <li>Robot manipulation</li><li>Learning from human interventions</li><li>Reinforcement learning</li>
+        <li>Visuomotor policies</li><li>GPU inference</li><li>Language and structure</li>
+      </ul>
+
+      <div class="affil">
+        <h3>Affiliated labs</h3>
+        <ul>
+          <li><a href="https://ai.stanford.edu/">Stanford Artificial Intelligence Laboratory (SAIL)</a></li>
+          <li><a href="https://svl.stanford.edu/">Stanford Vision and Learning Lab (SVL)</a></li>
+          <li><a href="https://tml.stanford.edu/">The Movement Lab (TML)</a></li>
+          <li><a href="https://nlp.stanford.edu/">Stanford Natural Language Processing Group</a></li>
+        </ul>
+      </div>
+
+      <div class="lab">
+        <div class="entry flat">
+          <h3>Stanford Vision and Learning Lab (SVL), Stanford AI Lab</h3>
+          <span class="when">Sep 2026 – now</span>
+          <ul>
+            <li>Built a 30 Hz inference pipeline that feeds camera, proprioceptive and tactile observations to FACT visuomotor policies on a dual-arm YAM manipulation platform.</li>
+            <li>Built live-observation, offline-replay and recording infrastructure (video, HDF5 and metadata) so policy runs can be inspected and reproduced.</li>
+            <li>Evaluated pretrained policies over 381 prediction windows from seven teleoperated episodes and found that zero-shot transfer underperformed simple motion baselines on our hardware.</li>
+            <li>Added non-actuating policy previews, forward/inverse kinematics checks and automated safety preflight checks before anything moves on hardware.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="lab">
+        <div class="entry flat">
+          <h3>Learning from human interventions <span class="badge">In progress</span></h3>
+          <span class="when">CS329H, Fall 2026</span>
+          <ul>
+            <li>Designing a study of supervisor drift: when a person corrects a robot less often after a policy update, is the robot better or does the person just trust it more? Frozen-policy probes and probabilistic intervention models are meant to separate the two.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="lab">
+        <div class="entry flat">
+          <h3>Stanford Natural Language Processing Group, Stanford AI Lab</h3>
+          <span class="when">Apr – Sep 2026</span>
+          <ul>
+            <li>Syntax-aware Transformer pre-pretraining on flattened Universal Dependencies, to study data-efficient language acquisition and how those representations transfer downstream.</li>
+            <li>Designed transformations that turn dependency-annotated sentences into structured training sequences, so the effect of syntactic supervision can be tested in a controlled way.</li>
+          </ul>
+          <!-- TODO: link poster or write-up if public -->
+        </div>
+      </div>
+
+      <div class="lab">
+        <div class="entry flat">
+          <h3>Koç University, Natural Language Processing Research</h3>
+          <span class="when"><!-- TODO: dates --></span>
+          <ul>
+            <li>Built multilingual preprocessing pipelines and benchmarks for metalinguistic reasoning, covering grammatical inference and morphology across many languages.</li>
+            <li>Curated about 300 translated and tokenized linguistics puzzles for reasoning evaluation, and fine-tuned and evaluated GPT, T5 and BERT-family models.</li>
+          </ul>
+          <!-- TODO: add the coauthored paper once its status is confirmed -->
+        </div>
+      </div>
+
+      <div class="lab">
+        <h3>Writing</h3>
+        <p style="margin-top:.6rem">AI safety paper, Stanford Boothe Prize honorable mention (2026).
+          <!-- TODO: link the paper PDF, e.g. <a href="papers/boothe.pdf">Read the paper</a> --></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="wrap sec-head">
+    <h2>Experience</h2>
+    <div>
+      <article class="entry">
+        <h3>Hardware Technology Intern</h3>
+        <span class="when">Jun – Sep 2026</span>
+        <div class="org">Apple</div>
+        <ul>
+          <li>Wrote C/C++ cellular control-plane firmware from L1/PHY specifications for next-generation modem chips.</li>
+          <li>Designed a C++ combinatorial optimization solver to replace a multi-megabyte lookup table, landing within 1 of the proven optimum across 330 workloads.</li>
+          <li>Proved the hardware resource assignment problem NP-hard and built an exact oracle with independent optimality certificates, making certification about 500× faster.</li>
+          <li>Checked the modeled constraints against production C++ logic with mutation-based tests that caught all 16 injected faults.</li>
+        </ul>
+      </article>
+
+      <article class="entry">
+        <h3>Software Engineer Intern</h3>
+        <span class="when">Jun – Sep 2025</span>
+        <div class="org">NewFrame AI</div>
+        <ul>
+          <li>Built a five-stage, multithreaded video-analysis pipeline for a generative AI advertising agent: scene detection, multimodal model analysis, quality checks and structured JSON/CSV export.</li>
+          <li>In testing, the pipeline processed about 2–4 shots a minute at roughly $0.002 per shot, with configurable worker parallelism.</li>
+          <li>Benchmarked 10 text, image and video generation models and fine-tuned LoRA adapters across five content categories to guide which models to integrate.</li>
+        </ul>
+      </article>
+
+      <article class="entry" id="microsoft">
+        <h3>Machine Learning Intern</h3>
+        <span class="when">Jun – Sep 2025</span>
+        <div class="org">Microsoft Turkey</div>
+        <ul>
+          <li>Built and evaluated GRU and LSTM networks in PyTorch for financial and enterprise time-series forecasting, including the preprocessing and training workflow.</li>
+        </ul>
+        <div class="more"><a href="#ts-forecasting">See the forecasting project</a></div>
+      </article>
+
+      <h3 style="margin:2rem 0 .25rem">Earlier</h3>
+      <article class="entry">
+        <h3>AI Intern, OBSS Technology</h3>
+        <span class="when">Aug – Sep 2023</span>
+        <ul><li>Document chunking and preprocessing so language models could summarize PDFs, text files and web pages.</li></ul>
+      </article>
+      <article class="entry">
+        <h3>AI and Data Science Intern, DASAL Aviation</h3>
+        <span class="when">Jul – Sep 2022</span>
+        <ul><li>Predictive modeling on UAV telemetry with TensorFlow and Pandas, plus TCP client-server tooling for moving engineering data.</li></ul>
+      </article>
+      <article class="entry">
+        <h3>Computer Vision Intern, Imona Technologies</h3>
+        <span class="when">Feb 2021 – Aug 2022</span>
+        <ul><li>Trained and fine-tuned YOLO-based detection and tracking models used for customer-traffic monitoring in more than 120 retail stores.</li></ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap sec-head">
+    <h2>Projects</h2>
+    <div>
+      <article class="featured">
+        <h3>From Text to Torque</h3>
+        <p style="margin-top:.6rem">A pipeline that turns text-generated humanoid motions into physically tracked controllers. Kimodo motions for a Unitree G1 become MuJoCo Warp tracking tasks, trained with PPO across 1,024 parallel environments on walking, waving, tapping the head, squatting and jumping.</p>
+        <div class="stats">
+          <div><b>1,024</b>parallel environments</div>
+          <div><b>13.5 → 250</b>squat episode length after fixing termination</div>
+        </div>
+        <p>The interesting failure: strict termination made the squat policy collapse after about 13 steps. Recalibrating the thresholds recovered full 250-step control.</p>
+        <a href="https://github.com/kuzeykantarcioglu/text-to-torque">View on GitHub</a>
+        <ul class="tags"><li>CS224R</li><li>PPO</li><li>MuJoCo Warp</li><li>Unitree G1</li></ul>
+      </article>
+
+      <article class="entry">
+        <h3>GPU-accelerated robot policy inference <span class="badge">In progress</span></h3>
+        <span class="when">Sep 2026 – now</span>
+        <ul>
+          <li>CUDA C++ and Triton kernels for transformer-based visuomotor policies, aimed at launch overhead and memory movement.</li>
+          <li>A profiling and benchmarking workflow in NVIDIA Nsight that compares the custom kernels against PyTorch and TensorRT.</li>
+        </ul>
+        <!-- TODO: once measured, add median/p99 latency, VRAM, speedup, GPU model and a chart -->
+      </article>
+
+      <article class="entry">
+        <h3>Geometry-aware positional embeddings for 3D reconstruction</h3>
+        <span class="when">CS231N, Spring 2026</span>
+        <ul>
+          <li>Ray-aware Transformer embeddings that ground ViT patch tokens in the camera origin and viewing rays.</li>
+          <li>Controlled ablations against 2D positional, view-ID and camera-pose embeddings on about 2,000 ShapeNet objects; cut sparse-view Chamfer error by 17% with one view and 22% with two.</li>
+        </ul>
+        <!-- TODO: link poster / report -->
+      </article>
+
+      <article class="entry">
+        <h3>Adaptive language tutoring as a POMDP</h3>
+        <span class="when">CS229, Winter 2026</span>
+        <ul>
+          <li>Modeled a learner’s proficiency as a 20-dimensional belief state across five exercise modules, in a Gymnasium environment calibrated by maximum likelihood on Duolingo SLAM response data.</li>
+          <li>Compared PPO, DQN, MPC, LinUCB, curriculum and random policies; PPO did best on cost-adjusted cumulative reward.</li>
+        </ul>
+      </article>
+
+      <article class="entry" id="ts-forecasting">
+        <h3>Time-series forecasting with recurrent networks</h3>
+        <span class="when">Microsoft Turkey, 2025</span>
+        <ul>
+          <li>GRU and LSTM forecasters in PyTorch for financial and enterprise time series.</li>
+          <!-- TODO: what was forecast, horizon, error metric (MAE/RMSE/MAPE), baseline beaten. A public demo on open data works if the original is confidential. -->
+        </ul>
+      </article>
+
+      <article class="entry">
+        <h3>Bare-metal RISC-V operating system and Space Invaders</h3>
+        <span class="when">Feb – Apr 2025</span>
+        <ul>
+          <li>A bare-metal runtime and shell in Assembly and C on a Mango Pi: memory allocation, GPIO, timers, printf, input, integer-only graphics and a system monitor, with no operating system underneath.</li>
+          <li>A Space Invaders remake on top of it, with interrupt-driven I²C, DMA, I²S and SPI drivers for live microphone input, accelerometer control and audio.</li>
+        </ul>
+        <!-- Course code is usually private under the honor code; a demo video works well here -->
+      </article>
+
+      <h3 style="margin-top:2.5rem">Hackathons and side projects</h3>
+      <div class="smaller">
+        <div>
+          <a href="https://github.com/kuzeykantarcioglu/compliance_vision_cloud">Video compliance monitor</a>
+          <p>TreeHacks 2026. Write compliance rules in plain English and check video streams against them with multimodal LLMs, in the cloud or on a local DGX.</p>
+        </div>
+        <div>
+          <strong>Matcha Vibe</strong>
+          <p>TreeHacks XI, Otsuka VALUENEX Award. A Zoom companion that reads speech, gestures and sentiment with Gemini, Groq and ElevenLabs, and adapts an AI avatar and meeting space to the room’s mood.</p>
+          <!-- TODO: link repo or Devpost -->
+        </div>
+        <div>
+          <a href="https://github.com/kuzeykantarcioglu/nerf_turret_sound_control">Trumpet-controlled Nerf turret</a>
+          <p>A Raspberry Pi 5 turret that detects musical notes with an FFT and turns them into stepper-motor aiming and solenoid firing.</p>
+        </div>
+        <div>
+          <a href="https://github.com/kuzeykantarcioglu/PL_dataset_generation">Procedural language dataset generation</a>
+          <p>Using LLMs to generate procedural language examples for text understanding research.</p>
+        </div>
+        <div>
+          <a href="https://github.com/kuzeykantarcioglu/word_prediction_LSTM">Next-word prediction with LSTMs</a>
+          <p>An early language-modeling project with recurrent networks.</p>
+        </div>
+        <div>
+          <strong>Robot perception coursework</strong>
+          <p>EE227: a MiniUNet segmenter at about 0.82 validation mean IoU, TSDF fusion from RGB-D frames to a 3D mesh, and ICP object registration.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="teaching">
+  <div class="wrap sec-head">
+    <h2>Teaching and teams</h2>
+    <div>
+      <article class="entry">
+        <h3>Section Leader, Stanford CS106</h3>
+        <span class="when"><!-- TODO: dates --></span>
+        <ul><li>Weekly Python and C++ sections, help hours and grading for introductory courses serving more than 800 students.</li></ul>
+      </article>
+      <article class="entry">
+        <h3>Stanford RoboSub</h3>
+        <span class="when"><!-- TODO: dates --></span>
+        <ul><li>Hydrophone sensing, Teensy firmware and ROS 2 components for an autonomous underwater vehicle.</li></ul>
+      </article>
+      <article class="entry">
+        <h3>Team Captain, FIRST Robotics Competition</h3>
+        <span class="when"><!-- TODO: dates --></span>
+        <ul><li>Led a 27-person team through four semi-autonomous robots, and wrote Java control code with motion planning and vision-assisted targeting.</li></ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="honors">
+  <div class="wrap sec-head">
+    <h2>Honors</h2>
+    <ul class="honors">
+      <li><span>Apple iContest Intern Competition, finalist</span><span>2026</span></li>
+      <li><span>Stanford Boothe Prize, honorable mention for an AI safety paper</span><span>2026</span></li>
+      <li><span>TreeHacks XI, Otsuka VALUENEX Award (team)</span><span>2025</span></li>
+      <li><span>FIRST Robotics World Championship, Engineering Inspiration Award (team)</span><span>2024</span></li>
+      <li><span>International Olympiad in Artificial Intelligence, team leader</span><span>2024</span></li>
+    </ul>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap sec-head">
+    <h2>Contact</h2>
+    <div class="prose">
+      <p>I’m looking for internships in robot learning, GPU systems and ML infrastructure. The quickest way to reach me is <a href="mailto:kuzey@stanford.edu">kuzey@stanford.edu</a>.</p>
+      <p><a href="https://github.com/kuzeykantarcioglu">GitHub</a> &nbsp; <a href="https://linkedin.com/in/kkuzey">LinkedIn</a></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">B.S. Computer Science, minor in Electrical Engineering, Stanford University, expected 2028.</div>
+</footer>
+
+<script>
+(() => {
+  const c = document.getElementById('arm');
+  const ctx = c.getContext('2d');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W, H, dpr, target = null, lastMove = 0, t = 0;
+  const trail = [];
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+  function size(){
+    dpr = window.devicePixelRatio || 1;
+    const r = c.getBoundingClientRect();
+    W = r.width; H = r.height;
+    c.width = W * dpr; c.height = H * dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  function pointer(e){
+    const r = c.getBoundingClientRect();
+    target = {x:e.clientX - r.left, y:e.clientY - r.top};
+    lastMove = performance.now();
+    if (reduce) draw();
+  }
+  c.addEventListener('pointermove', pointer);
+  c.addEventListener('pointerdown', pointer);
+
+  let ee = null;
+  function draw(){
+    const base = {x:W*0.5, y:H*0.86};
+    const L1 = Math.min(W,H)*0.33, L2 = Math.min(W,H)*0.27;
+    let goal;
+    if (target && performance.now() - lastMove < 2500) goal = target;
+    else goal = {x: base.x + Math.sin(t*0.9)*L1*0.95, y: base.y - L1*0.9 + Math.sin(t*1.7)*L2*0.55};
+    ee = ee ? {x: ee.x + (goal.x-ee.x)*0.12, y: ee.y + (goal.y-ee.y)*0.12} : goal;
+    if (reduce) ee = goal;
+
+    // two-link IK, elbow up
+    let dx = ee.x - base.x, dy = ee.y - base.y;
+    let d = Math.hypot(dx,dy);
+    const maxR = L1 + L2 - 0.5, minR = Math.abs(L1-L2) + 0.5;
+    const reach = Math.max(minR, Math.min(maxR, d));
+    const ang = Math.atan2(dy,dx);
+    const tx = base.x + Math.cos(ang)*reach, ty = base.y + Math.sin(ang)*reach;
+    const cosE = (reach*reach - L1*L1 - L2*L2)/(2*L1*L2);
+    const q2 = -Math.acos(Math.max(-1,Math.min(1,cosE)));
+    const q1 = ang - Math.atan2(L2*Math.sin(q2), L1 + L2*Math.cos(q2));
+    const elbow = {x: base.x + L1*Math.cos(q1), y: base.y + L1*Math.sin(q1)};
+    const tip = {x: elbow.x + L2*Math.cos(q1+q2), y: elbow.y + L2*Math.sin(q1+q2)};
+
+    trail.push({...tip}); if (trail.length > 70) trail.shift();
+
+    const ink = css('--ink'), acc = css('--accent'), joint = css('--joint'), line = css('--line'), muted = css('--muted');
+    ctx.clearRect(0,0,W,H);
+
+    // workspace
+    ctx.strokeStyle = line; ctx.lineWidth = 1; ctx.setLineDash([4,6]);
+    ctx.beginPath(); ctx.arc(base.x, base.y, L1+L2, Math.PI, 2*Math.PI); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(0, base.y+14); ctx.lineTo(W, base.y+14); ctx.stroke();
+
+    // trail
+    if (!reduce) for (let i=1;i<trail.length;i++){
+      ctx.globalAlpha = i/trail.length*0.6;
+      ctx.strokeStyle = acc; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(trail[i-1].x,trail[i-1].y); ctx.lineTo(trail[i].x,trail[i].y); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // goal marker
+    ctx.strokeStyle = muted; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(goal.x, goal.y, 9, 0, 2*Math.PI); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(goal.x-14,goal.y); ctx.lineTo(goal.x+14,goal.y); ctx.moveTo(goal.x,goal.y-14); ctx.lineTo(goal.x,goal.y+14); ctx.stroke();
+
+    // base
+    ctx.fillStyle = ink;
+    ctx.fillRect(base.x-26, base.y+2, 52, 12);
+    // links
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = ink; ctx.lineWidth = 16;
+    ctx.beginPath(); ctx.moveTo(base.x,base.y); ctx.lineTo(elbow.x,elbow.y); ctx.stroke();
+    ctx.lineWidth = 11;
+    ctx.beginPath(); ctx.moveTo(elbow.x,elbow.y); ctx.lineTo(tip.x,tip.y); ctx.stroke();
+    // joints
+    for (const [p,r] of [[base,9],[elbow,7]]){
+      ctx.fillStyle = joint; ctx.beginPath(); ctx.arc(p.x,p.y,r,0,2*Math.PI); ctx.fill();
+    }
+    // gripper
+    const a = q1+q2, g = 11;
+    ctx.strokeStyle = acc; ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(tip.x + Math.cos(a+1.2)*g, tip.y + Math.sin(a+1.2)*g);
+    ctx.lineTo(tip.x, tip.y);
+    ctx.lineTo(tip.x + Math.cos(a-1.2)*g, tip.y + Math.sin(a-1.2)*g);
+    ctx.stroke();
+  }
+  function loop(){ t += 0.016; draw(); requestAnimationFrame(loop); }
+
+  size(); addEventListener('resize', () => { size(); draw(); });
+  if (reduce) draw(); else loop();
+})();
+</script>
 </body>
-
-
-
-
 </html>
