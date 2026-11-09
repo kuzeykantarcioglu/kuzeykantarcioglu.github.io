@@ -137,6 +137,8 @@ h1,h2,h3{font-family:var(--serif);font-weight:500;margin:0;letter-spacing:-.01em
 .study dd{margin:0 0 .5rem;color:var(--ink)}
 .study dd .num{font-variant-numeric:lining-nums tabular-nums;font-weight:500}
 .case .lede{color:var(--ink)}
+.case .lede + .lede{margin-top:-.75rem}
+.hero .stand.second{margin-top:1rem;font-size:clamp(1.05rem,1.6vw,1.2rem);max-width:46ch}
 .more{margin-top:1.1rem;max-width:62ch}
 .more summary{cursor:pointer;list-style:none;display:inline-flex;align-items:baseline;gap:.5rem;font:500 .95rem/1.4 var(--sans);color:var(--copper-ink);border-bottom:1px solid var(--copper);padding-bottom:.15rem}
 .more summary::-webkit-details-marker{display:none}
@@ -274,8 +276,8 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
     <div class="hero-grid">
       <div>
         <h1 id="name"><span>Kuzey</span><span>Kantarcıoğlu</span></h1>
-        <p class="stand">I build robot learning infrastructure in the Stanford AI Lab. Previously at Apple, I designed resource-allocation algorithms in Python and C++ that come within 1 of the proven optimum across 330 workloads.</p>
-        <p class="where">B.S. Computer Science, minor in Electrical Engineering, Stanford, 2028. C++, Python, PyTorch, CUDA, Triton, MuJoCo.</p>
+        <p class="stand">I’m a Stanford CS student working on robot learning, optimization, and the systems underneath.</p>
+        <p class="stand second">At the Stanford AI Lab, I work on getting learned policies onto real robots. At Apple, I built optimization and verification tools for cellular hardware. I like understanding things all the way down, from the math to the implementation to the hardware that actually has to run it.</p>
         <div class="actions">
           <a class="primary" href="#work">Selected work</a>
           <a href="https://github.com/kuzeykantarcioglu">GitHub</a>
@@ -323,7 +325,8 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
       </div>
       <div class="main">
         <h3 id="c2">Proof-backed optimization for cellular hardware</h3>
-        <p class="lede">Designed and implemented resource-allocation algorithms in Python and C++, combining combinatorial optimization with exact verification. Across <span class="num">330</span> workloads on <span class="num">11</span> hardware configurations, the solver came within <span class="num">1</span> of the proven optimum, and an independent certification system I built made optimality verification about <span class="num">500×</span> faster in internal benchmarks.</p>
+        <p class="lede">At Apple, I worked on a hardware resource-allocation problem that called for more than a fast algorithm: I wanted to know how good a solution could be, and how we could prove it.</p>
+        <p class="lede">I developed optimization and verification tools in Python and C++, proved the underlying problem NP-hard, and evaluated solutions across <span class="num">330</span> workloads. They came within <span class="num">one unit</span> of the certified optimum, while an independent verification workflow achieved approximately <span class="num">500×</span> faster certification in internal benchmarks.</p>
         <figure class="fig">
           <div class="scroll" tabindex="0" role="region" aria-label="Figure, scrolls sideways on small screens"><svg viewBox="0 0 620 272" role="img" aria-labelledby="fa1">
             <title id="fa1">Conceptual diagram: each workload goes to a candidate solver and to an exact branch-and-bound solver; their results are compared. Below, a constraint model is reconstructed from both the specification and the production implementation, and mutation tests check it.</title>
@@ -370,7 +373,9 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
       </div>
       <div class="main">
         <h3 id="c1">Evaluating learned policies on a dual-arm robot</h3>
-        <p class="lede">Integrated camera, proprioceptive and tactile data into a <span class="num">30&nbsp;Hz</span> observation pipeline for pretrained FACT visuomotor policies on a dual-arm YAM robot, with live preview, offline replay, recording and safety gating. In offline evaluation over <span class="num">381</span> prediction windows from <span class="num">7</span> teleoperated episodes, zero-shot FACT underperformed simple motion baselines on this hardware.</p>
+        <p class="lede">At Stanford, I’m working on bringing pretrained visuomotor policies onto a real dual-arm robot.</p>
+        <p class="lede">I built the observation and evaluation pipeline around the policy, integrating cameras, proprioception, and tactile sensing at <span class="num">30&nbsp;Hz</span>, along with live previews, replay, and experiment recording.</p>
+        <p class="lede">The first offline experiments covered <span class="num">381</span> prediction windows from <span class="num">seven</span> teleoperated episodes. The pretrained policy underperformed simple motion baselines, which gives us a concrete starting point for improving it.</p>
         <figure class="fig">
           <div class="scroll" tabindex="0" role="region" aria-label="Figure, scrolls sideways on small screens"><svg viewBox="0 0 620 124" role="img" aria-labelledby="fr1">
             <title id="fr1">Timeline drawn to scale: observations arrive every 33 milliseconds, while one policy plan took about 210 milliseconds in an earlier configuration.</title>
@@ -426,14 +431,16 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
       </div>
       <div class="main">
         <h3 id="c4">From Text to Torque: feasibility-aware humanoid motion tracking</h3>
-        <p class="lede">Text-to-motion models make clips that look plausible but may be impossible for a torque-controlled Unitree G1. We built a pipeline from Kimodo-generated motions to MuJoCo Warp tracking tasks and trained PPO policies across <span class="num">1,024</span> parallel environments. Because generation is stochastic, which reference you choose to track turns out to be an RL intervention in itself.</p>
+        <p class="lede">Getting a humanoid to imitate a motion is harder than generating one that looks convincing.</p>
+        <p class="lede">With Benji Warburton, I built a pipeline that turns text-generated Unitree G1 motions into reinforcement-learning tracking tasks in MuJoCo Warp. We trained PPO controllers across <span class="num">1,024</span> parallel environments.</p>
         <figure class="photo wide">
           <img src="assets/t2t/rollouts-contact-sheet.webp" width="1350" height="510" alt="Seven simulation frames of a white Unitree G1 humanoid on a blue checkered floor, each overlaid with a translucent green reference figure, labeled walk loose, walk strict, walk curriculum, squat loose, squat strict, wave strict and tap strict." loading="lazy" decoding="async">
           <figcaption class="anno"><b>Fig. 4</b> Rendered PPO rollouts from the project. The white robot is the policy; the translucent green figure is the text-generated reference it is tracking.</figcaption>
         </figure>
         <div class="telling">
           <p><strong>Best-of-N references.</strong>For each prompt we generated several motion seeds and scored each one with cheap reference-only diagnostics before any training. Diagnostic-best seeds beat diagnostic-worst seeds in early strict-PPO probes on jump, roll and squat.</p>
-          <p><strong>The squat.</strong>Under strict termination, squat episodes ended after <span class="num">13.5</span> steps. Loose thresholds let episodes run the full <span class="num">250</span>, but the rendered rollout shows the robot falling while its episode continues. A calibrated threshold also reached 250 steps, and in its rollout the robot stays on its feet. Episode length alone says little about tracking quality.</p>
+          <p>One of the most useful debugging discoveries came from the squat task. Episodes were terminating after <span class="num">13.5</span> steps because the failure threshold was too strict. Fixing the termination criteria let training episodes reach the full <span class="num">250</span>-step horizon.</p>
+          <p>How it was fixed matters. Simply loosening the thresholds also reached 250 steps, but in that rollout the robot falls while its episode continues; with a calibrated threshold it stays on its feet. Episode length alone says little about tracking quality.</p>
         </div>
         <figure class="fig">
           <div class="scroll" tabindex="0" role="region" aria-label="Figure, scrolls sideways on small screens"><svg viewBox="0 0 620 118" role="img" aria-labelledby="fs1">
@@ -478,7 +485,8 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
       </div>
       <div class="main">
         <h3 id="c5">Geometry-aware positional embeddings for sparse-view 3D reconstruction</h3>
-        <p class="lede">From one or a few rendered views, predict a 2,048-point surface point cloud. A ViT that knows each patch’s 2D position still has no idea where in space that patch is looking, so two similar-looking patches from different cameras can mean different parts of the object.</p>
+        <p class="lede">Most image models know where a patch is in an image, but not where the camera was when it saw it.</p>
+        <p class="lede">For our sparse-view 3D reconstruction project, I designed ray-aware positional embeddings that give Vision Transformer patches their camera origin and viewing direction.</p>
         <figure class="photo wide">
           <img src="assets/recon/task.webp" width="1200" height="526" alt="Four rendered grey views of a ShapeNet airplane on the left, an arrow labeled 2D to 3D reconstruction, and a colored 3D point cloud of the airplane on the right." loading="lazy" decoding="async">
           <figcaption class="anno"><b>Fig. 8</b> The task: rendered ShapeNet views in, a 2,048-point cloud out. From the project poster.</figcaption>
@@ -493,7 +501,7 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
           <figcaption class="anno"><b>Fig. 9</b> Ray-aware token construction, from the project poster.</figcaption>
         </figure>
         </div>
-        <p class="result">Ray-aware embeddings reduced Chamfer error by <span class="num">17%</span> with one view and <span class="num">22%</span> with two, relative to the 2D positional baseline, and improved F-score at τ = 0.01 by <span class="num">29%</span> and <span class="num">27%</span> at the same view counts.</p>
+        <p class="result">Working with Kuba Hashemian and Leon Liu, we compared geometric embeddings against standard positional approaches while keeping the underlying architecture fixed. On approximately <span class="num">2,000</span> ShapeNet objects, the ray-aware approach reduced Chamfer error by <span class="num">17%</span> with one view and <span class="num">22%</span> with two. F-score improved by <span class="num">29%</span> and <span class="num">27%</span>, respectively.</p>
         <figure class="fig">
           <div class="scroll" tabindex="0" role="region" aria-label="Figure, scrolls sideways on small screens"><svg viewBox="0 0 620 124" role="img" aria-labelledby="f3t">
             <title id="f3t">Chamfer error relative to the 2D positional baseline: 0.83 with one view, 0.78 with two views.</title>
@@ -536,7 +544,9 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
       </div>
       <div class="main">
         <h3 id="c6">A computer from the registers up, and a game that listens</h3>
-        <p class="lede">A bare-metal runtime and shell in C and RISC-V assembly on a Mango Pi, with GPIO, timers, printf, malloc, input, graphics and a system monitor, and no operating system. On top of it, Space Invaders driven by microphone and accelerometer input through interrupt-driven I²C, I²S, SPI and DMA drivers. Graphics routines use integer arithmetic only, within software floating-point constraints.</p>
+        <p class="lede">I wanted to build a computer system without leaning on an operating system.</p>
+        <p class="lede">On a RISC-V MangoPi, I wrote the runtime, hardware drivers, libraries, and shell in C and assembly. That included memory allocation, graphics, interrupts, and hardware interfaces.</p>
+        <p class="lede">Then I built Space Invaders on top of it, with microphone and accelerometer controls through low-level peripheral drivers.</p>
         <figure class="fig">
           <div class="scroll" tabindex="0" role="region" aria-label="Figure, scrolls sideways on small screens"><svg viewBox="0 0 620 132" role="img" aria-labelledby="f4t">
             <title id="f4t">Conceptual diagram of the software stack: hardware, drivers, libraries, shell and game.</title>
@@ -560,7 +570,8 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
       </div>
       <div class="main">
         <h3 id="c3">CUDA and Triton kernels for visuomotor policy inference</h3>
-        <p class="lede">Writing CUDA C++ and Triton kernels that use fusion to cut launch overhead and memory traffic in transformer-based visuomotor policies. Profiling with NVIDIA Nsight and benchmarking against optimized PyTorch and TensorRT are in progress.</p>
+        <p class="lede">I’m exploring how to make transformer-based robot policies run faster by working below the model level, in CUDA C++ and Triton kernels.</p>
+        <p class="lede">The focus is kernel fusion, memory traffic, and profiling with NVIDIA Nsight, with comparisons against optimized PyTorch and TensorRT implementations.</p>
       </div>
     </article>
   </div>
@@ -674,8 +685,9 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
     <div class="nb">
       <div class="margin about-margin"></div>
       <div class="main">
-        <p>I grew up in Istanbul and came to Stanford for computer science, with a minor in electrical engineering. What I like most is the point where an algorithm meets something that pushes back: a robot arm, a modem, a GPU, a board with no operating system.</p>
-        <p>Away from the lab I take photographs, play trumpet, and keep learning languages. The trumpet occasionally crosses over: one of my side projects is a turret that takes its orders from it.</p>
+        <p>I grew up in Istanbul and came to Stanford to study computer science.</p>
+        <p>What I like most is the point where an algorithm meets something that pushes back: a robot arm, a modem, a GPU, or a board with no operating system. I like figuring out why things don’t work, getting deep enough into the system to fix them, and seeing an idea actually run.</p>
+        <p>Outside the lab, I take photographs, play trumpet, and learn languages. Sometimes those interests overlap with engineering. I built a trumpet-controlled turret, for example.</p>
         <ul class="labs" aria-label="Affiliated labs">
           <li><a href="https://ai.stanford.edu/">Stanford Artificial Intelligence Laboratory (SAIL)</a></li>
           <li><a href="https://svl.stanford.edu/">Stanford Vision and Learning Lab (SVL)</a></li>
