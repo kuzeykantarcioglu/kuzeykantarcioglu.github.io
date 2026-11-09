@@ -3,15 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kuzey Kantarcıoğlu</title>
-<meta name="description" content="Stanford CS student working on robot learning, reinforcement learning and GPU inference.">
+<title>Kuzey Kantarcıoğlu · Robot learning, optimization, systems</title>
+<meta name="description" content="Stanford CS student. Robot learning infrastructure at the Stanford AI Lab; C++ optimization and verification at Apple; CUDA and Triton inference.">
+<meta name="author" content="Kuzey Kantarcıoğlu">
+<link rel="canonical" href="https://kuzeykantarcioglu.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Kuzey Kantarcıoğlu">
+<meta property="og:description" content="Robot learning, mathematical optimization and the low-level systems underneath. Stanford CS ’28.">
+<meta property="og:url" content="https://kuzeykantarcioglu.github.io/">
+<meta property="og:image" content="https://kuzeykantarcioglu.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F1ECE2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1B1A18" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231F1E1B'/%3E%3Cpath d='M8 25 L13 12 L24 9' fill='none' stroke='%23F1ECE2' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='13' cy='12' r='2.4' fill='%23C0632F'/%3E%3Ccircle cx='24' cy='9' r='2' fill='none' stroke='%23C0632F' stroke-width='1.6'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ---------- tokens ---------- */
 :root{
-  --bg:#EDF1F3; --surface:#FFFFFF; --ink:#16202B; --muted:#55626F;
-  --line:#CBD4DB; --accent:#0E6F69; --accent-soft:#D4ECE9; --joint:#C2481B;
+  --paper:#F1ECE2; --paper-2:#E9E3D6; --ink:#1F1E1B; --ink-2:#4A4741; --ink-3:#77726A;
+  --rule:#CFC7B8; --rule-2:#DDD6C9; --copper:#A9501F; --copper-ink:#8E4116; --trace:#C0632F;
+  --serif:"Newsreader","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --sans:"IBM Plex Sans",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --gutter:clamp(1.25rem,4vw,3rem);
+  --max:1240px;
   color-scheme:light;
   box-sizing:border-box;
   padding-top:env(safe-area-inset-top,0px);
@@ -19,514 +38,854 @@
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#121820; --surface:#1A222C; --ink:#E4E9EE; --muted:#97A3AF;
-    --line:#2C3743; --accent:#5ACFC4; --accent-soft:#16312F; --joint:#F08A5D;
+    --paper:#1B1A18; --paper-2:#23221F; --ink:#ECE6DA; --ink-2:#C3BCAF; --ink-3:#8F897E;
+    --rule:#3A3833; --rule-2:#2E2C28; --copper:#E08A55; --copper-ink:#EBA071; --trace:#E08A55;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#121820; --surface:#1A222C; --ink:#E4E9EE; --muted:#97A3AF;
-  --line:#2C3743; --accent:#5ACFC4; --accent-soft:#16312F; --joint:#F08A5D;
+  --paper:#1B1A18; --paper-2:#23221F; --ink:#ECE6DA; --ink-2:#C3BCAF; --ink-3:#8F897E;
+  --rule:#3A3833; --rule-2:#2E2C28; --copper:#E08A55; --copper-ink:#EBA071; --trace:#E08A55;
   color-scheme:dark;
 }
 *,*::before,*::after{box-sizing:inherit}
-html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 1rem);-webkit-text-size-adjust:100%}
 body{
-  margin:0;background:var(--bg);color:var(--ink);
-  font:400 1.0625rem/1.6 "Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  -webkit-font-smoothing:antialiased;
+  margin:0;background:var(--paper);color:var(--ink);
+  font:400 1.125rem/1.62 var(--serif);
+  font-optical-sizing:auto;
+  text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;
 }
-a{color:var(--accent);text-underline-offset:.18em;text-decoration-thickness:1px}
+::selection{background:var(--copper);color:var(--paper)}
+a{color:var(--copper-ink);text-decoration-thickness:1px;text-underline-offset:.2em}
 a:hover{text-decoration-thickness:2px}
-:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
-h1,h2,h3{font-family:"Bricolage Grotesque","Public Sans",system-ui,sans-serif;line-height:1.1;margin:0}
-h1{font-size:clamp(2.6rem,7vw,4.6rem);font-weight:700;letter-spacing:-.025em;font-variation-settings:"opsz" 96}
-h2{font-size:clamp(1.6rem,3.4vw,2.1rem);font-weight:700;letter-spacing:-.01em}
-h3{font-size:1.2rem;font-weight:500}
-p{margin:0 0 1em}
-.wrap{max-width:1080px;margin:0 auto;padding:0 clamp(1.25rem,4vw,2.5rem)}
+:focus-visible{outline:2px solid var(--copper);outline-offset:3px}
+.skip{position:absolute;left:-9999px;top:0}
+.skip:focus{left:1rem;top:1rem;background:var(--ink);color:var(--paper);padding:.5rem .8rem;z-index:20}
+p{margin:0 0 .9em}
+h1,h2,h3{font-family:var(--serif);font-weight:500;margin:0;letter-spacing:-.01em}
 
-/* nav */
-nav{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.25rem 0;flex-wrap:wrap}
-nav .me{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;text-decoration:none;color:var(--ink)}
-nav ul{display:flex;gap:1.25rem;list-style:none;margin:0;padding:0;flex-wrap:wrap}
-nav ul a{color:var(--muted);text-decoration:none;font-size:.95rem}
-nav ul a:hover{color:var(--ink)}
+/* annotation voice: the only place mono appears */
+.anno{font:400 .78rem/1.5 var(--mono);color:var(--ink-3);letter-spacing:0}
+.anno b{font-weight:500;color:var(--ink-2)}
 
-/* hero */
-.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(1.5rem,4vw,3.5rem);align-items:center;padding:clamp(2rem,6vw,4.5rem) 0 clamp(2.5rem,6vw,5rem)}
-.hero .lede{font-size:1.2rem;color:var(--muted);max-width:34ch;margin-top:1.25rem}
-.hero .links{display:flex;gap:1.25rem;flex-wrap:wrap;margin-top:1.75rem;font-weight:600}
-.stage{position:relative;aspect-ratio:1/1;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;touch-action:none}
-.stage canvas{display:block;width:100%;height:100%;cursor:crosshair}
-.stage figcaption{position:absolute;left:1rem;bottom:.8rem;right:1rem;font-size:.82rem;color:var(--muted)}
+/* ---------- page frame ---------- */
+.frame{max-width:var(--max);margin:0 auto;padding:0 var(--gutter)}
+/* two-column notebook grid: margin notes | main text */
+.nb{display:grid;grid-template-columns:minmax(150px,1fr) minmax(0,3.4fr);column-gap:clamp(1.5rem,4vw,3.5rem)}
+.nb > .margin{grid-column:1}
+.nb > .main{grid-column:2;min-width:0}
 
-/* sections */
-section{padding:clamp(2.5rem,6vw,4.5rem) 0;border-top:1px solid var(--line)}
-.sec-head{display:grid;grid-template-columns:minmax(180px,1fr) 2.6fr;gap:2rem}
-.sec-head > h2{position:sticky;top:calc(env(safe-area-inset-top,0px) + 1.5rem);align-self:start}
-.prose{max-width:66ch}
+/* ---------- masthead ---------- */
+.mast{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;padding:1.4rem 0 1.1rem;border-bottom:1px solid var(--rule)}
+.mast .who{font:500 1rem/1 var(--sans);color:var(--ink);text-decoration:none;letter-spacing:.005em}
+.mast nav ul{display:flex;flex-wrap:wrap;gap:.35rem 1.4rem;list-style:none;margin:0;padding:0}
+.mast nav a{font:400 .9rem/1 var(--sans);color:var(--ink-2);text-decoration:none}
+.mast nav a:hover{color:var(--ink);text-decoration:underline}
 
-/* research */
-.interests{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.25rem 0 2rem;padding:0;list-style:none}
-.interests li{background:var(--accent-soft);color:var(--ink);padding:.3rem .8rem;border-radius:999px;font-size:.92rem}
-.lab{padding:1.5rem 0;border-bottom:1px solid var(--line)}
-.lab:last-child{border-bottom:0}
+/* ---------- hero ---------- */
+.hero{padding:clamp(2.5rem,6vw,4.5rem) 0 0}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:clamp(2rem,5vw,4.5rem);align-items:end}
+.hero h1{font-size:clamp(3rem,8.2vw,6.4rem);line-height:.94;font-weight:400;letter-spacing:-.035em;font-variation-settings:"opsz" 72}
+.hero h1 span{display:block}
+.hero .stand{font:400 clamp(1.2rem,2vw,1.45rem)/1.45 var(--serif);color:var(--ink-2);max-width:40ch;margin:1.6rem 0 0}
+.hero .where{font:400 .95rem/1.5 var(--sans);color:var(--ink-3);margin:1.1rem 0 0}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem 1.75rem;margin-top:2rem;font:500 .98rem/1 var(--sans)}
+.actions a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink);padding-bottom:.3rem}
+.actions a:hover{color:var(--copper-ink);border-color:var(--copper)}
+.actions a.primary{border-bottom-width:2px;border-color:var(--copper)}
 
-/* entries */
-.entry{display:grid;grid-template-columns:1fr auto;gap:.25rem 1.5rem;padding:1.5rem 0;border-bottom:1px solid var(--line)}
-.entry:first-child{padding-top:0}
-.entry:last-child{border-bottom:0}
-.entry .when{color:var(--muted);font-size:.92rem;white-space:nowrap;font-variant-numeric:tabular-nums}
-.entry .org{color:var(--muted);margin-bottom:.6rem}
-.entry ul{margin:.25rem 0 0;padding-left:1.1rem;grid-column:1/-1}
-.entry li{margin:.35rem 0}
-.entry .more{grid-column:1/-1;margin-top:.6rem;display:flex;gap:1.25rem;flex-wrap:wrap;font-weight:600;font-size:.95rem}
+/* the plate: the site's one visual motif, a plotted trace */
+.plate{margin:0}
+.plate .surface{position:relative;aspect-ratio:5/4;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);
+  background-image:radial-gradient(circle,var(--rule) .9px,transparent 1.1px);background-size:20px 20px;background-position:10px 10px;touch-action:none}
+.plate canvas{position:absolute;inset:0;width:100%;height:100%;cursor:crosshair}
+.plate figcaption{padding-top:.55rem;max-width:56ch;line-height:1.5;font-size:.78rem}
+.plate .readout{position:absolute;top:.6rem;right:.1rem;font-variant-numeric:tabular-nums;white-space:pre;pointer-events:none}
 
-.entry.flat{padding:0;border:0}
-.badge{display:inline-block;vertical-align:middle;font-family:"Public Sans",sans-serif;font-size:.75rem;font-weight:600;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:.1rem .55rem;margin-left:.35rem}
-.entry h3 + .when:empty{display:none}
-.affil{margin:0 0 1.5rem;padding:1.25rem 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.affil ul{list-style:none;margin:.6rem 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.4rem 2rem}
-/* projects */
-.featured{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:clamp(1.25rem,3vw,2rem);margin-bottom:1.5rem}
-.featured .stats{display:flex;gap:2rem;flex-wrap:wrap;margin:1rem 0}
-.featured .stats div{font-size:.9rem;color:var(--muted)}
-.featured .stats b{display:block;font-family:"Bricolage Grotesque",sans-serif;font-size:1.6rem;color:var(--ink)}
-.tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.75rem;padding:0;list-style:none}
-.tags li{font-size:.82rem;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:.1rem .5rem}
+/* contents: first-screen evidence */
+.contents{list-style:none;margin:clamp(2.5rem,5vw,3.5rem) 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:clamp(1.25rem,3vw,2.5rem);border-top:1px solid var(--ink)}
+.contents li{border-bottom:1px solid var(--rule)}
+.contents a{display:block;padding:.85rem 0 1rem;text-decoration:none;color:var(--ink)}
+.contents .t{display:block;font:500 1.08rem/1.3 var(--serif);margin:.25rem 0 .3rem}
+.contents .r{display:block;font:400 .9rem/1.45 var(--sans);color:var(--ink-2)}
+.contents a:hover .t{color:var(--copper-ink);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
+@media (max-width:900px){.contents{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.contents{grid-template-columns:1fr}}
 
-.smaller{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.25rem 2rem;margin-top:2rem}
-.smaller a{font-weight:600}
-.smaller p{color:var(--muted);font-size:.95rem;margin:.25rem 0 0}
+/* ---------- sections ---------- */
+.section{padding:clamp(3rem,7vw,5.5rem) 0 0}
+.sec-title{border-top:1px solid var(--ink);padding-top:.9rem;margin-bottom:clamp(1.75rem,4vw,3rem)}
+.sec-title h2{font-size:clamp(1.9rem,3.6vw,2.6rem);line-height:1.05;font-weight:400;letter-spacing:-.02em}
+.sec-title .dek{font:400 1.05rem/1.5 var(--serif);color:var(--ink-2);max-width:52ch;margin:.6rem 0 0;font-style:italic}
 
-/* honors / contact */
-.honors{list-style:none;margin:0;padding:0}
-.honors li{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 0;border-bottom:1px solid var(--line)}
-.honors li span:last-child{color:var(--muted);white-space:nowrap}
-footer{padding:2.5rem 0 3rem;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+/* ---------- case studies ---------- */
+.case{padding:0 0 clamp(2.5rem,5vw,3.75rem);margin-bottom:clamp(2.5rem,5vw,3.75rem);border-bottom:1px solid var(--rule)}
+.case:last-of-type{border-bottom:0;margin-bottom:0}
+.case h3{font-size:clamp(1.55rem,2.8vw,2.05rem);line-height:1.12;letter-spacing:-.018em;max-width:34ch;text-wrap:balance}
+.entry h3,.sec-title h2{text-wrap:balance}
+.lede,.stand{text-wrap:pretty}
+.case .lede{font-size:1.15rem;color:var(--ink-2);max-width:60ch;margin:.7rem 0 1.5rem}
+.margin .anno{display:block;margin-bottom:.9rem}
+.margin .meta-org{font:500 .95rem/1.35 var(--sans);color:var(--ink);margin-bottom:.35rem;display:block}
+.status{display:inline-block;font:500 .78rem/1.4 var(--mono);color:var(--copper-ink);border-left:2px solid var(--copper);padding-left:.5rem}
+.status.done{color:var(--ink-2);border-color:var(--ink-3)}
 
-@media (max-width:820px){
-  .hero{grid-template-columns:1fr}
-  .stage{max-width:460px;width:100%;aspect-ratio:4/3}
-  .sec-head{grid-template-columns:1fr;gap:1.25rem}
-  .sec-head > h2{position:static}
-  .entry{grid-template-columns:1fr}
+/* case body: run-in heads in a two-col definition list */
+.study{display:grid;grid-template-columns:minmax(7.5rem,9.5rem) minmax(0,62ch);gap:.55rem 1.5rem;margin:0}
+.study dt{font:500 .9rem/1.65 var(--sans);color:var(--ink);padding-top:.12rem}
+.study dd{margin:0 0 .5rem;color:var(--ink)}
+.study dd .num{font-variant-numeric:lining-nums tabular-nums;font-weight:500}
+.case .lede{color:var(--ink)}
+.more{margin-top:1.1rem;max-width:62ch}
+.more summary{cursor:pointer;list-style:none;display:inline-flex;align-items:baseline;gap:.5rem;font:500 .95rem/1.4 var(--sans);color:var(--copper-ink);border-bottom:1px solid var(--copper);padding-bottom:.15rem}
+.more summary::-webkit-details-marker{display:none}
+.more summary::after{content:"+";font:400 .95rem/1 var(--mono)}
+.more[open] summary::after{content:"\2212"}
+.more summary .close{display:none}
+.more[open] summary .open{display:none}
+.more[open] summary .close{display:inline}
+.more .body{padding-top:1.1rem}
+.more .body p{max-width:62ch}
+.more .body p strong{font:500 .92rem/1 var(--sans);color:var(--ink);margin-right:.35rem}
+.case .links{margin-top:1.1rem;font:500 .92rem/1.4 var(--sans);display:flex;gap:1.5rem;flex-wrap:wrap}
+
+/* figures: same stroke language as the plate */
+.fig{margin:1.75rem 0 1.5rem;max-width:62ch}
+.fig .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.fig svg{display:block;width:100%;min-width:540px;height:auto;overflow:visible}
+.fig figcaption{margin-top:.55rem;max-width:62ch;line-height:1.5;font-size:.78rem}
+.fig .axis{stroke:var(--ink-3);stroke-width:1}
+.fig .grid{stroke:var(--rule-2);stroke-width:1}
+.fig .ink{stroke:var(--ink);fill:none;stroke-width:1.25}
+.fig .base{fill:var(--rule)}
+.fig .hit{fill:var(--trace)}
+.fig .tr{stroke:var(--trace);fill:none;stroke-width:1.75}
+.fig text{font:400 11px var(--mono);fill:var(--ink-3)}
+.fig text.lab{fill:var(--ink-2)}
+.fig text.big{font:500 12px var(--mono);fill:var(--ink)}
+.fig .box{fill:var(--paper);stroke:var(--ink);stroke-width:1}
+.fig .box.soft{stroke:var(--ink-3);stroke-dasharray:3 3}
+
+/* photos and poster viewer */
+.photo{margin:1.6rem 0 1.4rem;max-width:62ch}
+.photo img{display:block;width:100%;height:auto;border:1px solid var(--rule);background:var(--paper-2)}
+.photo figcaption{margin-top:.55rem;line-height:1.5;font-size:.78rem}
+.photo.poster{max-width:100%}
+.photo a{display:block}
+.photo a:focus-visible img{outline:2px solid var(--copper);outline-offset:3px}
+.case .result{max-width:62ch}
+.case.compact h3{font-size:clamp(1.3rem,2.2vw,1.6rem)}
+.case .telling p{max-width:62ch}
+.split{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:1.75rem;align-items:start}
+.split .photo{margin-top:0}
+.photo.narrow{max-width:420px}
+@media (max-width:760px){.split{grid-template-columns:1fr}}
+.entry .photo{margin:.8rem 0 .2rem}
+.photo.wide{max-width:100%}
+.case .telling p strong{font:500 .92rem/1 var(--sans);color:var(--ink);margin-right:.35rem}
+.viewer{border:0;padding:0;max-width:min(96vw,1600px);max-height:94vh;background:var(--paper);color:var(--ink)}
+.viewer::backdrop{background:rgba(20,18,16,.78)}
+.viewer img{display:block;max-width:100%;max-height:calc(94vh - 3rem);width:auto;height:auto;margin:0 auto}
+.viewer .bar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.6rem .9rem;font:500 .9rem/1 var(--sans)}
+.viewer button{font:inherit;background:none;border:1px solid var(--ink);color:var(--ink);padding:.35rem .7rem;cursor:pointer}
+
+/* ---------- notebook entries ---------- */
+.entries{display:grid;grid-template-columns:1fr 1fr;gap:0 clamp(1.5rem,4vw,3rem)}
+.entry{padding:1.25rem 0 1.5rem;border-top:1px solid var(--rule)}
+.entry h3{font-size:1.3rem;line-height:1.2;margin:.35rem 0 .7rem}
+.entry p{font-size:1.02rem;color:var(--ink-2)}
+.entry p strong{font:500 .88rem/1 var(--sans);color:var(--ink);margin-right:.3rem}
+
+/* ---------- experience ---------- */
+.cv{list-style:none;margin:0;padding:0}
+.cv li{display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:.3rem 1.5rem;padding:.95rem 0;border-top:1px solid var(--rule-2)}
+.cv li:first-child{border-top:0;padding-top:0}
+.cv .yr{font:400 .82rem/1.9 var(--mono);color:var(--ink-3);font-variant-numeric:tabular-nums}
+.cv .role{font:500 1rem/1.45 var(--sans);color:var(--ink)}
+.cv .org{color:var(--ink-2)}
+.cv p{grid-column:2;margin:.15rem 0 0;font-size:1rem;color:var(--ink-2);max-width:64ch}
+.sub{font:500 1rem/1.4 var(--sans);margin:2.5rem 0 1rem;color:var(--ink)}
+
+.index{list-style:none;margin:0;padding:0;columns:2;column-gap:clamp(1.5rem,4vw,3rem)}
+.index li{break-inside:avoid;padding:.7rem 0;border-top:1px solid var(--rule-2)}
+.index .t{font:500 .98rem/1.4 var(--sans)}
+.index p{margin:.2rem 0 0;font-size:.98rem;color:var(--ink-2)}
+
+/* ---------- about ---------- */
+.about p{font-size:1.25rem;line-height:1.55;max-width:38em}
+.labs{list-style:none;padding:0;margin:1.75rem 0 0;font:400 .98rem/1.5 var(--sans)}
+.labs li{padding:.45rem 0;border-top:1px solid var(--rule-2)}
+
+/* ---------- notes & contact ---------- */
+.empty{font-style:italic;color:var(--ink-2);max-width:52ch}
+.contact-list{list-style:none;margin:0;padding:0;font:400 1.35rem/1.3 var(--serif)}
+.contact-list li{display:grid;grid-template-columns:7.5rem 1fr;gap:1.5rem;padding:.8rem 0;border-top:1px solid var(--rule-2);align-items:baseline}
+.contact-list li:first-child{border-top:0;padding-top:0}
+.contact-list .anno{font-size:.8rem}
+footer{margin-top:clamp(3.5rem,8vw,6rem);padding:1.25rem 0 2.5rem;border-top:1px solid var(--ink)}
+footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+
+/* ---------- responsive ---------- */
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:1fr;align-items:start}
+  .plate .surface{aspect-ratio:4/3}
+  .entries{grid-template-columns:1fr}
+  .index{columns:1}
+}
+@media (max-width:760px){
+  .nb{grid-template-columns:1fr}
+  .nb > .margin,.nb > .main{grid-column:1}
+  .case .margin{display:flex;flex-wrap:wrap;gap:.25rem 1.25rem;align-items:baseline;margin-bottom:.9rem}
+  .case .margin .anno{margin:0}
+  .case .margin .meta-org{width:100%;margin:0}
+  .sec-title .margin{display:none}
+  .study{grid-template-columns:1fr;gap:.1rem}
+  .study dd{margin-bottom:.85rem}
+  .cv li,.contact-list li{grid-template-columns:1fr;gap:.1rem}
+  .cv p{grid-column:1}
+  .about-margin{margin-bottom:1rem}
+}
+@media print{
+  .plate,.mast nav,.skip{display:none}
+  body{background:#fff;color:#000;font-size:11pt}
 }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <nav aria-label="Main">
-    <a class="me" href="#top">Kuzey Kantarcıoğlu</a>
-    <ul>
-      <li><a href="#research">Research</a></li>
-      <li><a href="#experience">Experience</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#teaching">Teaching</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
+<a class="skip" href="#work">Skip to selected work</a>
 
-  <header class="hero" id="top">
-    <div>
-      <h1>Kuzey Kantarcıoğlu</h1>
-      <p class="lede">I study computer science at Stanford and work on robots that learn from people, and on the GPU code that lets them act fast enough to matter.</p>
-      <div class="links">
-        <a href="https://github.com/kuzeykantarcioglu">GitHub</a>
-        <a href="https://linkedin.com/in/kkuzey">LinkedIn</a>
-        <a href="mailto:kuzey@stanford.edu">Email</a>
-        <!-- TODO: add resume.pdf to the repo, then uncomment -->
-        <!-- <a href="resume.pdf">Resume</a> -->
-      </div>
-    </div>
-    <figure class="stage" style="margin:0">
-      <canvas id="arm" aria-label="A two-joint robot arm that reaches toward your pointer"></canvas>
-      <figcaption>Move your pointer or tap: the arm solves inverse kinematics to reach it.</figcaption>
-    </figure>
+<div class="frame">
+  <header class="mast">
+    <a class="who" href="#top">Kuzey Kantarcıoğlu</a>
+    <nav aria-label="Sections">
+      <ul>
+        <li><a href="#work">Selected work</a></li>
+        <li><a href="#notebook">Research</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
   </header>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero" id="top" aria-labelledby="name">
+    <div class="hero-grid">
+      <div>
+        <h1 id="name"><span>Kuzey</span><span>Kantarcıoğlu</span></h1>
+        <p class="stand">I build robot learning infrastructure in the Stanford AI Lab. Previously at Apple, I designed resource-allocation algorithms in Python and C++ that come within 1 of the proven optimum across 330 workloads.</p>
+        <p class="where">B.S. Computer Science, minor in Electrical Engineering, Stanford, 2028. C++, Python, PyTorch, CUDA, Triton, MuJoCo.</p>
+        <div class="actions">
+          <a class="primary" href="#work">Selected work</a>
+          <a href="https://github.com/kuzeykantarcioglu">GitHub</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+      <figure class="plate">
+        <div class="surface">
+          <span class="anno readout" id="readout" aria-hidden="true"></span>
+          <canvas id="arm" role="img" aria-label="A two-link robot arm, drawn as a line diagram, reaching toward the pointer and leaving a trace of its end-effector path."></canvas>
+        </div>
+        <figcaption>
+          <span class="anno"><b>Fig. 0</b> Two-link arm, analytic inverse kinematics. Move the pointer or tap to set a target.</span>
+        </figcaption>
+      </figure>
+    </div>
+    <ol class="contents" aria-label="Selected work at a glance">
+      <li><a href="#apple"><span class="anno">Apple, 2026</span><span class="t">Proof-backed optimization for cellular hardware</span><span class="r">Within 1 of optimum across 330 workloads; ~500× faster certification; 16/16 faults caught</span></a></li>
+      <li><a href="#robot-learning"><span class="anno">Stanford SVL, ongoing</span><span class="t">Robot policy evaluation on real hardware</span><span class="r">30 Hz observation pipeline; 381 prediction windows evaluated offline</span></a></li>
+      <li><a href="#text-to-torque"><span class="anno">CS224R, 2026</span><span class="t">From Text to Torque</span><span class="r">PPO on 1,024 environments; reference selection as an RL intervention</span></a></li>
+      <li><a href="#reconstruction"><span class="anno">CS231N, 2026</span><span class="t">Geometry-aware 3D reconstruction</span><span class="r">Chamfer error down 17% (1 view) and 22% (2 views); F-score up 29% and 27%</span></a></li>
+      <li><a href="#risc-v"><span class="anno">2025</span><span class="t">Bare-metal RISC-V system</span><span class="r">Runtime, shell and interrupt-driven drivers in C and assembly</span></a></li>
+      <li><a href="#gpu"><span class="anno">Ongoing</span><span class="t">CUDA and Triton policy inference</span><span class="r">Kernel optimization; benchmarking in progress</span></a></li>
+    </ol>
+  </section>
 </div>
 
-<section id="research">
-  <div class="wrap sec-head">
-    <h2>Research</h2>
-    <div>
-      <div class="prose">
-        <p>I’m interested in how robots can recover when things go wrong. Most of my work sits where learning meets deployment: policies that take a human’s correction and improve from it, stay steady when the scene shifts, and run on real hardware at real control rates.</p>
+<main>
+<!-- ===================== SELECTED WORK ===================== -->
+<section class="section" id="work" aria-labelledby="work-h">
+  <div class="frame">
+    <div class="sec-title nb">
+      <div class="margin"><span class="anno">Completed work first</span></div>
+      <div class="main">
+        <h2 id="work-h">Selected work</h2>
       </div>
-      <ul class="interests" aria-label="Interests">
-        <li>Robot manipulation</li><li>Learning from human interventions</li><li>Reinforcement learning</li>
-        <li>Visuomotor policies</li><li>GPU inference</li><li>Language and structure</li>
-      </ul>
+    </div>
 
-      <div class="affil">
-        <h3>Affiliated labs</h3>
-        <ul>
+    <article class="case nb" id="apple" aria-labelledby="c2">
+      <div class="margin">
+        <span class="meta-org">Apple, Hardware Technology</span>
+        <span class="anno">Intern, Summer 2026</span>
+        <span class="anno">Python, C++, branch-and-bound, combinatorial optimization, firmware</span>
+        <span class="status done">Completed</span>
+      </div>
+      <div class="main">
+        <h3 id="c2">Proof-backed optimization for cellular hardware</h3>
+        <p class="lede">Designed and implemented resource-allocation algorithms in Python and C++, combining combinatorial optimization with exact verification. Across <span class="num">330</span> workloads on <span class="num">11</span> hardware configurations, the solver came within <span class="num">1</span> of the proven optimum, and an independent certification system I built made optimality verification about <span class="num">500×</span> faster in internal benchmarks.</p>
+        <figure class="fig">
+          <div class="scroll" tabindex="0" role="region" aria-label="Figure, scrolls sideways on small screens"><svg viewBox="0 0 620 272" role="img" aria-labelledby="fa1">
+            <title id="fa1">Conceptual diagram: each workload goes to a candidate solver and to an exact branch-and-bound solver; their results are compared. Below, a constraint model is reconstructed from both the specification and the production implementation, and mutation tests check it.</title>
+            <rect class="box" x="0" y="55" width="92" height="36"/><text class="lab" x="12" y="77">workload</text>
+            <path class="ink" d="M92 73 H116 V30 H140 M116 73 V116 H140"/>
+            <rect class="box" x="140" y="10" width="176" height="40"/><text class="lab" x="152" y="27">candidate solver</text><text x="152" y="42">Python, C++</text>
+            <rect class="box" x="140" y="96" width="176" height="40"/><text class="lab" x="152" y="113">exact branch-and-bound</text><text x="152" y="128">two independent checks</text>
+            <path class="ink" d="M316 30 H346 M316 116 H346"/>
+            <rect class="box" x="346" y="10" width="112" height="40"/><text class="lab" x="358" y="34">solution</text>
+            <rect class="box" x="346" y="96" width="112" height="40"/><text class="lab" x="358" y="113">proven optimum</text><text x="358" y="128">+ certificate</text>
+            <path class="ink" d="M458 30 H480 V64 H500 M458 116 H480 V82 H500"/>
+            <rect class="box" x="500" y="53" width="120" height="40" style="stroke:var(--trace)"/><text class="lab" x="512" y="70">compare</text><text x="512" y="85">gap ≤ 1 ?</text>
+            <line class="grid" x1="0" y1="152" x2="620" y2="152"/>
+            <rect class="box" x="0" y="172" width="150" height="36"/><text class="lab" x="12" y="194">specification</text>
+            <rect class="box" x="235" y="172" width="150" height="36" style="stroke:var(--trace)"/><text class="lab" x="247" y="194">constraint model</text>
+            <rect class="box" x="470" y="172" width="150" height="36"/><text class="lab" x="482" y="194">production C++</text>
+            <path class="ink" d="M150 190 H235 M385 190 H470"/>
+            <text x="158" y="166">reconstruct</text><text x="393" y="166">reconstruct</text>
+            <path class="tr" d="M310 208 V230" stroke-dasharray="3 3"/>
+            <rect class="box" x="235" y="230" width="150" height="36"/><text class="lab" x="247" y="252">mutation tests</text>
+            <text class="big" x="398" y="252">16/16 injected faults detected</text>
+            <text x="0" y="232">discrepancies found in</text><text x="0" y="246">3 of 5 modeled dimensions</text>
+          </svg></div>
+          <figcaption class="anno"><b>Fig. 1</b> Conceptual diagram of the workflow, drawn generically. Top: every candidate solution is measured against a certified optimum. Bottom: the constraint model is checked against both the written specification and the production implementation.</figcaption>
+        </figure>
+        <details class="more">
+          <summary><span class="open">Case study</span><span class="close">Hide case study</span></summary>
+          <div class="body">
+            <p><strong>Exact verification.</strong>The certification side is an exact branch-and-bound solver backed by two independent optimality checks, so every candidate solution is measured against a proven optimum rather than a best guess.</p>
+            <p><strong>Specification versus implementation.</strong>A solver is only as correct as its constraint model, so I checked whether the hardware specifications agreed with what the production C++ actually did. I reverse-engineered the production constraint logic and built constraint-analysis tooling that identified discrepancies in <span class="num">3</span> of the <span class="num">5</span> constraint dimensions I modeled, along with a mutation-testing framework that detected all <span class="num">16</span> injected faults.</p>
+            <p><strong>Theory and tradeoffs.</strong>I proved the resource-allocation problem NP-hard and explored alternative formulations, including minimum edge cover, to characterize exact solutions and hardware-configuration tradeoffs. I also investigated repair and bound-tightening improvements. Together with performance analysis, that decided which approaches were both mathematically possible and worth implementing.</p>
+            <p><strong>Also.</strong>Cellular control-plane firmware in C and C++, written from L1/PHY specifications. Finalist, Apple iContest intern competition, 2026.</p>
+          </div>
+        </details>
+      </div>
+    </article>
+
+    <article class="case nb" id="robot-learning" aria-labelledby="c1">
+      <div class="margin">
+        <span class="meta-org">Stanford Vision and Learning Lab</span>
+        <span class="anno">Sep 2026 to now</span>
+        <span class="anno">Linux, GPU inference, HDF5, dual-arm YAM</span>
+        <span class="status">Ongoing</span>
+      </div>
+      <div class="main">
+        <h3 id="c1">Evaluating learned policies on a dual-arm robot</h3>
+        <p class="lede">Integrated camera, proprioceptive and tactile data into a <span class="num">30&nbsp;Hz</span> observation pipeline for pretrained FACT visuomotor policies on a dual-arm YAM robot, with live preview, offline replay, recording and safety gating. In offline evaluation over <span class="num">381</span> prediction windows from <span class="num">7</span> teleoperated episodes, zero-shot FACT underperformed simple motion baselines on this hardware.</p>
+        <figure class="fig">
+          <div class="scroll" tabindex="0" role="region" aria-label="Figure, scrolls sideways on small screens"><svg viewBox="0 0 620 124" role="img" aria-labelledby="fr1">
+            <title id="fr1">Timeline drawn to scale: observations arrive every 33 milliseconds, while one policy plan took about 210 milliseconds in an earlier configuration.</title>
+            <text class="lab" x="0" y="35">observations</text><text x="0" y="48">30 Hz, ~33 ms</text>
+            <line class="ink" x1="120.0" y1="22" x2="120.0" y2="40"/><line class="ink" x1="143.3" y1="22" x2="143.3" y2="40"/><line class="ink" x1="166.7" y1="22" x2="166.7" y2="40"/><line class="ink" x1="190.0" y1="22" x2="190.0" y2="40"/><line class="ink" x1="213.3" y1="22" x2="213.3" y2="40"/><line class="ink" x1="236.7" y1="22" x2="236.7" y2="40"/><line class="ink" x1="260.0" y1="22" x2="260.0" y2="40"/><line class="ink" x1="283.3" y1="22" x2="283.3" y2="40"/><line class="ink" x1="306.7" y1="22" x2="306.7" y2="40"/><line class="ink" x1="330.0" y1="22" x2="330.0" y2="40"/><line class="ink" x1="353.3" y1="22" x2="353.3" y2="40"/><line class="ink" x1="376.7" y1="22" x2="376.7" y2="40"/><line class="ink" x1="400.0" y1="22" x2="400.0" y2="40"/><line class="ink" x1="423.3" y1="22" x2="423.3" y2="40"/><line class="ink" x1="446.7" y1="22" x2="446.7" y2="40"/><line class="ink" x1="470.0" y1="22" x2="470.0" y2="40"/><line class="ink" x1="493.3" y1="22" x2="493.3" y2="40"/><line class="ink" x1="516.7" y1="22" x2="516.7" y2="40"/><line class="ink" x1="540.0" y1="22" x2="540.0" y2="40"/><line class="ink" x1="563.3" y1="22" x2="563.3" y2="40"/><line class="ink" x1="586.7" y1="22" x2="586.7" y2="40"/><line class="ink" x1="610.0" y1="22" x2="610.0" y2="40"/>
+            <text class="lab" x="0" y="78">policy plans</text><text x="0" y="91">~210 ms each</text>
+            <rect class="hit" x="120" y="68" width="145" height="16" opacity=".85"/><rect class="hit" x="267" y="68" width="145" height="16" opacity=".6"/><rect class="hit" x="414" y="68" width="145" height="16" opacity=".85"/>
+            <text x="126" y="80" style="fill:var(--paper)">plan</text><text x="273" y="80" style="fill:var(--paper)">plan</text><text x="420" y="80" style="fill:var(--paper)">plan</text>
+            <line class="axis" x1="120" y1="98" x2="610" y2="98"/><line class="axis" x1="120.0" y1="98" x2="120.0" y2="103"/><text x="116.0" y="116">0</text><line class="axis" x1="190.0" y1="98" x2="190.0" y2="103"/><text x="180.0" y="116">100</text><line class="axis" x1="260.0" y1="98" x2="260.0" y2="103"/><text x="250.0" y="116">200</text><line class="axis" x1="330.0" y1="98" x2="330.0" y2="103"/><text x="320.0" y="116">300</text><line class="axis" x1="400.0" y1="98" x2="400.0" y2="103"/><text x="390.0" y="116">400</text><line class="axis" x1="470.0" y1="98" x2="470.0" y2="103"/><text x="460.0" y="116">500</text><line class="axis" x1="540.0" y1="98" x2="540.0" y2="103"/><text x="530.0" y="116">600</text><line class="axis" x1="610.0" y1="98" x2="610.0" y2="103"/><text x="600.0" y="116">700</text><text x="582" y="104" dy="-9">ms</text>
+          </svg></div>
+          <figcaption class="anno"><b>Fig. 2</b> Observation rate and inference latency are different numbers. Drawn to scale from the two measurements: observations every ~33 ms, and about 210 ms per plan in an earlier configuration, so several observations arrive during each plan.</figcaption>
+        </figure>
+        <details class="more">
+          <summary><span class="open">Case study</span><span class="close">Hide case study</span></summary>
+          <div class="body">
+            <p><strong>Pipeline.</strong>Camera images, arm and hand proprioception, and tactile readings are synchronized into the observations the policy expects at 30&nbsp;Hz. Live preview, offline replay and recording to video, HDF5 and metadata make every run inspectable and repeatable.</p>
+            <p><strong>Pre-deployment validation.</strong>Before any command reaches the motors, a plan passes a non-actuating preview, forward and inverse kinematics checks against recorded poses, and an automated safety preflight.</p>
+            <p><strong>Evaluation.</strong>On our data the pretrained policy does not beat simple motion baselines zero-shot. That sets the bar any adaptation, including learning from human interventions, has to clear.</p>
+            <p><strong>Debugging.</strong>Investigated race conditions in tactile observation history, arm and hand coordinate mappings, and controller-stability failures under gravity compensation.</p>
+            <p><strong>Status.</strong>Live observation, inference and offline evaluation work end to end. The policy has not yet run autonomously on the arms.</p>
+            <figure class="fig">
+          <div class="scroll" tabindex="0" role="region" aria-label="Figure, scrolls sideways on small screens"><svg viewBox="0 0 620 150" role="img" aria-labelledby="f1t">
+            <title id="f1t">Conceptual diagram: sensors feed a 30 Hz observation stream to the policy; its plan is previewed and checked before reaching the arms.</title>
+            <g>
+              <rect class="box" x="0" y="10" width="118" height="28"/><text class="lab" x="10" y="28">cameras</text>
+              <rect class="box" x="0" y="52" width="118" height="28"/><text class="lab" x="10" y="70">proprioception</text>
+              <rect class="box" x="0" y="94" width="118" height="28"/><text class="lab" x="10" y="112">tactile</text>
+              <path class="ink" d="M118 24 H150 V108 H118 M118 66 H176"/>
+              <rect class="box" x="176" y="48" width="118" height="36"/><text class="lab" x="186" y="64">observation</text><text x="186" y="77">30 Hz</text>
+              <path class="ink" d="M294 66 H324"/>
+              <rect class="box" x="324" y="48" width="92" height="36"/><text class="lab" x="334" y="64">FACT policy</text><text x="334" y="77">plan</text>
+              <path class="ink" d="M416 66 H446"/>
+              <rect class="box" x="446" y="40" width="96" height="52"/><text class="lab" x="456" y="58">preview</text><text class="lab" x="456" y="72">FK/IK check</text><text class="lab" x="456" y="86">preflight</text>
+              <path class="tr" d="M542 66 H586" stroke-dasharray="4 4"/>
+              <rect class="box soft" x="586" y="48" width="34" height="36"/><text class="lab" x="592" y="70">arm</text>
+              <text x="456" y="112">gate</text><text x="566" y="112">not yet</text>
+            </g>
+          </svg></div>
+          <figcaption class="anno"><b>Fig. 3</b> Conceptual diagram of the pipeline. The dashed link to the arms stays closed until autonomous rollout.</figcaption>
+        </figure>
+          </div>
+        </details>
+      </div>
+    </article>
+
+    <article class="case nb" id="text-to-torque" aria-labelledby="c4">
+      <div class="margin">
+        <span class="meta-org">Stanford CS224R</span>
+        <span class="anno">With Benji Warburton</span>
+        <span class="anno">Apr to Jun 2026</span>
+        <span class="anno">PPO, MuJoCo Warp, Unitree G1, Modal GPUs</span>
+        <span class="status done">Completed</span>
+      </div>
+      <div class="main">
+        <h3 id="c4">From Text to Torque: feasibility-aware humanoid motion tracking</h3>
+        <p class="lede">Text-to-motion models make clips that look plausible but may be impossible for a torque-controlled Unitree G1. We built a pipeline from Kimodo-generated motions to MuJoCo Warp tracking tasks and trained PPO policies across <span class="num">1,024</span> parallel environments. Because generation is stochastic, which reference you choose to track turns out to be an RL intervention in itself.</p>
+        <figure class="photo wide">
+          <img src="assets/t2t/rollouts-contact-sheet.webp" width="1350" height="510" alt="Seven simulation frames of a white Unitree G1 humanoid on a blue checkered floor, each overlaid with a translucent green reference figure, labeled walk loose, walk strict, walk curriculum, squat loose, squat strict, wave strict and tap strict." loading="lazy" decoding="async">
+          <figcaption class="anno"><b>Fig. 4</b> Rendered PPO rollouts from the project. The white robot is the policy; the translucent green figure is the text-generated reference it is tracking.</figcaption>
+        </figure>
+        <div class="telling">
+          <p><strong>Best-of-N references.</strong>For each prompt we generated several motion seeds and scored each one with cheap reference-only diagnostics before any training. Diagnostic-best seeds beat diagnostic-worst seeds in early strict-PPO probes on jump, roll and squat.</p>
+          <p><strong>The squat.</strong>Under strict termination, squat episodes ended after <span class="num">13.5</span> steps. Loose thresholds let episodes run the full <span class="num">250</span>, but the rendered rollout shows the robot falling while its episode continues. A calibrated threshold also reached 250 steps, and in its rollout the robot stays on its feet. Episode length alone says little about tracking quality.</p>
+        </div>
+        <figure class="fig">
+          <div class="scroll" tabindex="0" role="region" aria-label="Figure, scrolls sideways on small screens"><svg viewBox="0 0 620 118" role="img" aria-labelledby="fs1">
+            <title id="fs1">Squat results: strict termination, 13.5 steps, body position error 0.234; loose, 250 steps, error 0.271; calibrated threshold 2, 250 steps, error 0.263.</title>
+            <text x="150" y="10">episode length (steps)</text><text x="430" y="10">body position error</text>
+            <text class="lab" x="0" y="32">strict</text><rect class="base" x="150" y="21" width="13" height="14"/><text class="big" x="169" y="32">13.5</text>
+            <rect class="base" x="430" y="21" width="117" height="14"/><text class="big" x="553" y="32">0.234</text>
+            <text class="lab" x="0" y="64">loose</text><rect class="base" x="150" y="53" width="240" height="14"/><text class="big" x="396" y="64">250</text>
+            <rect class="base" x="430" y="53" width="136" height="14"/><text class="big" x="572" y="64">0.271</text>
+            <text class="lab" x="0" y="96">calibrated, thr 2</text><rect class="hit" x="150" y="85" width="240" height="14"/><text class="big" x="396" y="96">250</text>
+            <rect class="hit" x="430" y="85" width="131" height="14"/><text class="big" x="567" y="96">0.263</text>
+            <line class="axis" x1="150" y1="108" x2="390" y2="108"/><line class="axis" x1="430" y1="108" x2="580" y2="108"/>
+          </svg></div>
+          <figcaption class="anno"><b>Fig. 5</b> Final squat training metrics from the repository’s result tables. The longer episodes did not come with lower tracking error.</figcaption>
+        </figure>
+        <figure class="photo poster">
+          <a class="poster-open" data-title="From Text to Torque, research poster" href="assets/t2t/poster-full.png"><img src="assets/t2t/poster.webp" width="1600" height="930" alt="Research poster titled From Text to Torque: Feasibility-Aware Tracking of Text-Generated Humanoid Motions, by Kuzey Kantarcioglu and Benji Warburton, CS224R, Stanford University." loading="lazy" decoding="async"></a>
+          <figcaption class="anno"><b>Fig. 6</b> The project poster, with Benji Warburton. Select to view at full resolution.</figcaption>
+        </figure>
+        <div class="links"><a href="https://github.com/kuzeykantarcioglu/text-to-torque">Code and results on GitHub</a><a class="poster-open" data-title="From Text to Torque, research poster" href="assets/t2t/poster-full.png">Poster at full resolution</a></div>
+        <details class="more">
+          <summary><span class="open">Case study</span><span class="close">Hide case study</span></summary>
+          <div class="body">
+            <p><strong>Diagnostics.</strong>Root height range, root speed and acceleration, joint velocity and acceleration extremes, body angular speed and initial-state checks, combined into a clipped robust-z feasibility score. The goal was to reject bad references cheaply, not to learn a black-box predictor. Probe reward deltas, best minus worst seed: jump +0.055, roll +0.020, squat +0.227 (150 strict-PPO iterations, 256 environments).</p>
+            <p><strong>Temporal repair.</strong>Slowing the worst references to twice their duration was mixed: a slight help on jump, mixed on roll, worse on squat. Hard references often need regeneration or adaptive training, not just slower playback.</p>
+            <figure class="photo">
+          <img src="assets/t2t/squat-threshold-rollouts.webp" width="1400" height="862" alt="A grid of simulation frames at 0.2, 0.8, 1.4 and 2.0 seconds for four squat conditions: strict, calibrated threshold 1, calibrated threshold 2, and loose. In the loose row the robot has fallen to the floor by 1.4 seconds." loading="lazy" decoding="async">
+          <figcaption class="anno"><b>Fig. 7</b> Squat rollouts at four termination settings. In the loose row the robot is on the floor by 1.4 s while the episode continues.</figcaption>
+        </figure>
+          </div>
+        </details>
+      </div>
+    </article>
+
+    <article class="case nb" id="reconstruction" aria-labelledby="c5">
+      <div class="margin">
+        <span class="meta-org">Stanford CS231N</span>
+        <span class="anno">With Kuba Hashemian and Leon Liu</span>
+        <span class="anno">Apr to Jun 2026</span>
+        <span class="anno">DINO/ViT, Transformers, ShapeNetCore</span>
+        <span class="status done">Completed</span>
+      </div>
+      <div class="main">
+        <h3 id="c5">Geometry-aware positional embeddings for sparse-view 3D reconstruction</h3>
+        <p class="lede">From one or a few rendered views, predict a 2,048-point surface point cloud. A ViT that knows each patch’s 2D position still has no idea where in space that patch is looking, so two similar-looking patches from different cameras can mean different parts of the object.</p>
+        <figure class="photo wide">
+          <img src="assets/recon/task.webp" width="1200" height="526" alt="Four rendered grey views of a ShapeNet airplane on the left, an arrow labeled 2D to 3D reconstruction, and a colored 3D point cloud of the airplane on the right." loading="lazy" decoding="async">
+          <figcaption class="anno"><b>Fig. 8</b> The task: rendered ShapeNet views in, a 2,048-point cloud out. From the project poster.</figcaption>
+        </figure>
+        <div class="split">
+          <div class="telling">
+            <p><strong>Ray-aware tokens.</strong>Each patch token gets its visual feature, its 2D position, and an embedding of its camera origin and the ray direction through that patch, computed from the camera intrinsics and extrinsics.</p>
+            <p><strong>Controlled design.</strong>Same encoder, fusion module, decoder, data split and view protocol for every variant; the only experimental variable is the embedding. Baselines: 2D positional, view-ID and camera-pose embeddings, on about <span class="num">2,000</span> ShapeNetCore objects split at the object level.</p>
+          </div>
+          <figure class="photo narrow">
+          <img src="assets/recon/ray-token.webp" width="808" height="1001" alt="Diagram of ray-aware embedding construction: a ray from camera origin o through patch p on the image plane, and the patch token formed by adding the visual feature, a 2D positional embedding and a ray embedding of origin and direction." loading="lazy" decoding="async">
+          <figcaption class="anno"><b>Fig. 9</b> Ray-aware token construction, from the project poster.</figcaption>
+        </figure>
+        </div>
+        <p class="result">Ray-aware embeddings reduced Chamfer error by <span class="num">17%</span> with one view and <span class="num">22%</span> with two, relative to the 2D positional baseline, and improved F-score at τ = 0.01 by <span class="num">29%</span> and <span class="num">27%</span> at the same view counts.</p>
+        <figure class="fig">
+          <div class="scroll" tabindex="0" role="region" aria-label="Figure, scrolls sideways on small screens"><svg viewBox="0 0 620 124" role="img" aria-labelledby="f3t">
+            <title id="f3t">Chamfer error relative to the 2D positional baseline: 0.83 with one view, 0.78 with two views.</title>
+            <line class="grid" x1="150" y1="4" x2="150" y2="96"/><line class="grid" x1="376" y1="4" x2="376" y2="96"/><line class="grid" x1="602" y1="4" x2="602" y2="96"/>
+            <text class="lab" x="0" y="22">K = 1 view</text>
+            <rect class="base" x="150" y="10" width="452" height="10"/>
+            <rect class="hit" x="150" y="24" width="375" height="10"/><text class="big" x="533" y="33">0.83</text>
+            <text class="lab" x="0" y="66">K = 2 views</text>
+            <rect class="base" x="150" y="54" width="452" height="10"/>
+            <rect class="hit" x="150" y="68" width="353" height="10"/><text class="big" x="511" y="77">0.78</text>
+            <line class="axis" x1="150" y1="98" x2="602" y2="98"/>
+            <text x="146" y="114">0</text><text x="366" y="114">0.5</text><text x="580" y="114">1.0</text>
+          </svg></div>
+          <figcaption class="anno"><b>Fig. 10</b> Chamfer error, normalized so the 2D positional baseline is 1.0 at each K (grey). Copper is the ray-aware embedding.</figcaption>
+        </figure>
+        <div class="links"><a class="poster-open" data-title="Geometry-Aware Positional Embeddings, research poster" href="assets/recon/poster-full.webp">Poster at full resolution</a></div>
+        <details class="more">
+          <summary><span class="open">Qualitative results and poster</span><span class="close">Hide qualitative results and poster</span></summary>
+          <div class="body">
+            <p><strong>Where it still fails.</strong>Thin or occluded structures still need stronger shape priors or higher-resolution outputs.</p>
+            <figure class="photo narrow">
+          <img src="assets/recon/progression.webp" width="900" height="1431" alt="Grid of point-cloud reconstructions for a chair, an airplane and a table at eight input views: input renders on top, then 2D positional, view-ID, camera pose and geometry-aware predictions in red, and ground truth in green at the bottom." loading="lazy" decoding="async">
+          <figcaption class="anno"><b>Fig. 11</b> Reconstructions at eight views for each embedding variant, with ground truth in green. From the project poster.</figcaption>
+        </figure>
+            <figure class="photo poster">
+              <a class="poster-open" data-title="Geometry-Aware Positional Embeddings, research poster" href="assets/recon/poster-full.webp"><img src="assets/recon/poster.webp" width="1600" height="960" alt="Research poster titled Geometry-Aware Positional Embeddings for 3D Object Reconstruction, by Kuba Hashemian, Leon Liu and Kuzey Kantarcioglu, Computer Science, Stanford University." loading="lazy" decoding="async"></a>
+              <figcaption class="anno"><b>Fig. 12</b> The project poster, with Kuba Hashemian and Leon Liu. Select to view at full resolution.</figcaption>
+            </figure>
+          </div>
+        </details>
+      </div>
+    </article>
+
+    <article class="case nb" id="risc-v" aria-labelledby="c6">
+      <div class="margin">
+        <span class="meta-org">Bare-metal systems</span>
+        <span class="anno">Feb to Apr 2025</span>
+        <span class="anno">C, RISC-V assembly, Mango Pi</span>
+        <span class="status done">Completed</span>
+      </div>
+      <div class="main">
+        <h3 id="c6">A computer from the registers up, and a game that listens</h3>
+        <p class="lede">A bare-metal runtime and shell in C and RISC-V assembly on a Mango Pi, with GPIO, timers, printf, malloc, input, graphics and a system monitor, and no operating system. On top of it, Space Invaders driven by microphone and accelerometer input through interrupt-driven I²C, I²S, SPI and DMA drivers. Graphics routines use integer arithmetic only, within software floating-point constraints.</p>
+        <figure class="fig">
+          <div class="scroll" tabindex="0" role="region" aria-label="Figure, scrolls sideways on small screens"><svg viewBox="0 0 620 132" role="img" aria-labelledby="f4t">
+            <title id="f4t">Conceptual diagram of the software stack: hardware, drivers, libraries, shell and game.</title>
+            <rect class="box" x="0" y="100" width="620" height="28"/><text class="lab" x="10" y="118">RISC-V Mango Pi: GPIO, timers, interrupt controller</text>
+            <rect class="box" x="0" y="68" width="620" height="28"/><text class="lab" x="10" y="86">drivers: I²C (accelerometer), I²S (mic, audio), SPI, DMA</text>
+            <rect class="box" x="0" y="36" width="620" height="28"/><text class="lab" x="10" y="54">libraries: printf, malloc, input, graphics</text>
+            <rect class="box" x="0" y="4" width="300" height="28"/><text class="lab" x="10" y="22">shell, system monitor</text>
+            <rect class="box" x="320" y="4" width="300" height="28" style="stroke:var(--trace)"/><text class="lab" x="330" y="22">Space Invaders</text>
+          </svg></div>
+          <figcaption class="anno"><b>Fig. 13</b> Conceptual diagram of the stack, bottom to top. Everything above the hardware row is my code.</figcaption>
+        </figure>
+      </div>
+    </article>
+
+    <article class="case nb compact" id="gpu" aria-labelledby="c3">
+      <div class="margin">
+        <span class="meta-org">Independent project</span>
+        <span class="anno">Sep 2026 to now</span>
+        <span class="anno">CUDA C++, Triton, Nsight</span>
+        <span class="status">Ongoing</span>
+      </div>
+      <div class="main">
+        <h3 id="c3">CUDA and Triton kernels for visuomotor policy inference</h3>
+        <p class="lede">Writing CUDA C++ and Triton kernels that use fusion to cut launch overhead and memory traffic in transformer-based visuomotor policies. Profiling with NVIDIA Nsight and benchmarking against optimized PyTorch and TensorRT are in progress.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ===================== RESEARCH ===================== -->
+<section class="section" id="notebook" aria-labelledby="nb-h">
+  <div class="frame">
+    <div class="sec-title nb">
+      <div class="margin"><span class="anno">Completed first</span></div>
+      <div class="main">
+        <h2 id="nb-h">Research</h2>
+      </div>
+    </div>
+    <div class="nb">
+      <div class="margin"></div>
+      <div class="main entries">
+        <article class="entry">
+          <span class="status done">Completed, CS229, with Sandeep Sethuraman</span>
+          <h3>Adaptive language tutoring as a POMDP</h3>
+          <p>A tutor never sees what a student knows, only how they answer. We modeled the learner as a 20-dimensional belief state (mastery and interaction counts across 10 language skills), with the agent choosing among five exercise types. The simulator is fit by maximum likelihood to 100,000 exercises from 2,000 users in the Duolingo SLAM dataset.</p>
+          <p>Over 100 simulated learners, PPO had the best cost-adjusted reward (0.24 ± 0.18). MPC reached similar final proficiency (0.746 vs 0.744) at higher cost; LinUCB overspent; DQN converged to a cheap but ineffective policy.</p>
+          <figure class="photo">
+            <a class="poster-open" data-title="Language Learning as a Sequential Decision-Making Problem, research poster" href="assets/tutoring/poster-full.webp"><img src="assets/tutoring/mastery.webp" width="1200" height="720" alt="Line chart of mean belief mastery over 200 timesteps for PPO, DQN, LinUCB, random, curriculum and MPC policies, with shaded variance bands." loading="lazy" decoding="async"></a>
+            <figcaption class="anno">Mastery over an episode, by policy. Select for the full poster.</figcaption>
+          </figure>
+        </article>
+        <article class="entry">
+          <span class="status done">Completed, Stanford NLP Group</span>
+          <h3>Syntax-aware pre-pretraining for Transformers</h3>
+          <p>Flattened Universal Dependencies trees into structured training sequences to test whether a short stage of syntactic supervision, before ordinary text, makes language learning more data-efficient and how those representations transfer downstream.</p>
+        </article>
+        <article class="entry">
+          <span class="status done">Completed, Koç University</span>
+          <h3>Metalinguistic reasoning across languages</h3>
+          <p>Can a language model work out a grammar from a handful of examples? I built multilingual preprocessing and benchmarks for grammatical inference and morphology, curated about 300 translated and tokenized linguistics puzzles, and fine-tuned and evaluated GPT, T5 and BERT-family models.</p>
+        </article>
+        <article class="entry" id="forecasting">
+          <span class="status done">Completed, Microsoft Turkey</span>
+          <h3>Recurrent forecasting for enterprise time series</h3>
+          <p>GRU and LSTM forecasters in PyTorch for financial and enterprise data, including the preprocessing and training workflow.</p>
+        </article>
+        <article class="entry">
+          <span class="status">Ongoing, CS329H</span>
+          <h3>Separating policy improvement from changing human trust</h3>
+          <p>If supervisors intervene less after a policy update, either the robot improved or the supervisor’s beliefs shifted. I’m designing a study to tell those apart using frozen-policy probes, Bayesian belief updates and logistic intervention models fit by MLE and MAP estimation. Current stage: study design and pre-analysis plan.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EXPERIENCE ===================== -->
+<section class="section" id="experience" aria-labelledby="exp-h">
+  <div class="frame">
+    <div class="sec-title nb">
+      <div class="margin"><span class="anno">Most recent first</span></div>
+      <div class="main"><h2 id="exp-h">Experience</h2></div>
+    </div>
+    <div class="nb">
+      <div class="margin"></div>
+      <div class="main">
+        <ol class="cv" reversed>
+          <li><span class="yr">2026 to now</span><div><span class="role">Undergraduate Researcher</span> <span class="org">Stanford Vision and Learning Lab, Stanford AI Lab</span></div><p>Inference, evaluation and safety infrastructure for pretrained policies on dual-arm YAM robots. <a href="#robot-learning">Case study</a></p></li>
+          <li><span class="yr">2026</span><div><span class="role">Hardware Technology Intern</span> <span class="org">Apple</span></div><p>Combinatorial optimization in Python and C++, exact branch-and-bound certification, NP-hardness proof, verification of production constraint logic; control-plane firmware. <a href="#apple">Case study</a></p></li>
+          <li><span class="yr">2026</span><div><span class="role">Undergraduate Researcher</span> <span class="org">Stanford NLP Group, Stanford AI Lab</span></div><p>Syntax-aware Transformer pre-pretraining. <a href="#notebook">Research</a></p></li>
+          <li><span class="yr">2025</span><div><span class="role">Software Engineer Intern</span> <span class="org">NewFrame AI</span></div><p>A five-stage, multithreaded pipeline that breaks video ads into shots and analyzes each one for a generative AI advertising agent: scene detection, multimodal analysis, quality checks and structured export. In testing it handled 2–4 shots a minute at about $0.002 a shot. I also benchmarked 10 generation models and fine-tuned LoRA adapters across five categories.</p></li>
+          <li><span class="yr">2025</span><div><span class="role">Machine Learning Intern</span> <span class="org">Microsoft Turkey</span></div><p>GRU and LSTM time-series forecasting in PyTorch. <a href="#forecasting">Research</a></p></li>
+          <li><span class="yr">2023</span><div><span class="role">AI Intern</span> <span class="org">OBSS Technology</span></div><p>Document chunking and preprocessing for language-model summarization of PDFs, text files and web pages.</p></li>
+          <li><span class="yr">2022</span><div><span class="role">AI and Data Science Intern</span> <span class="org">DASAL Aviation</span></div><p>Predictive modeling on UAV telemetry; TCP tooling for engineering data.</p></li>
+          <li><span class="yr">2021 to 2022</span><div><span class="role">Computer Vision Intern</span> <span class="org">Imona Technologies</span></div><p>Trained and fine-tuned YOLO-based detection and tracking models for a customer-traffic analytics system used in more than 120 retail stores.</p></li>
+        </ol>
+
+        <h3 class="sub">Teaching and teams</h3>
+        <ol class="cv">
+          <li><span class="yr">Stanford</span><div><span class="role">Section Leader</span> <span class="org">CS106</span></div><p>Weekly Python and C++ sections, help hours and grading for courses enrolling more than 800 students; coaching students through algorithmic reasoning and debugging.</p></li>
+          <li><span class="yr">Stanford</span><div><span class="role">Software</span> <span class="org">Stanford RoboSub</span></div><p>Hydrophone sensing, Teensy firmware and ROS 2 components for an autonomous underwater vehicle.</p></li>
+          <li><span class="yr">Istanbul</span><div><span class="role">Team Captain</span> <span class="org">FIRST Robotics Competition</span></div><p>Captained a 27-person team through four semi-autonomous robot builds; wrote Java control software with motion planning and vision-assisted targeting.</p></li>
+        </ol>
+
+        <h3 class="sub">Other projects</h3>
+        <ul class="index">
+          <li><a class="t" href="https://github.com/kuzeykantarcioglu/compliance_vision_cloud">Video compliance monitor</a><p>TreeHacks 2026. Compliance rules in plain English, checked against video streams by multimodal LLMs, in the cloud or on a local DGX.</p></li>
+          <li><span class="t">Matcha Vibe</span><p>TreeHacks XI, team winner of the Otsuka VALUENEX Award. A Zoom companion that reads speech, gesture and sentiment and adapts an AI avatar to the room.</p></li>
+          <li><a class="t" href="https://github.com/kuzeykantarcioglu/nerf_turret_sound_control">Trumpet-controlled turret</a><p>EE14N, with Chisa Ogaki. A Raspberry Pi 5 turret: a 2048-sample FFT picks out trumpet notes, G and B pan a stepper-driven platform, and D fires a solenoid-triggered Nerf blaster.</p></li>
+          <li><span class="t">Robot perception coursework</span><p>EE227. MiniUNet segmentation at about 0.82 validation mean IoU, TSDF fusion from RGB-D to a mesh, ICP registration.</p></li>
+          <li><a class="t" href="https://github.com/kuzeykantarcioglu/PL_dataset_generation">Procedural language datasets</a><p>LLM-generated procedural language examples for text understanding research.</p></li>
+          <li><a class="t" href="https://github.com/kuzeykantarcioglu/word_prediction_LSTM">Next-word prediction</a><p>An early language model with LSTMs.</p></li>
+        </ul>
+
+        <h3 class="sub">Honors</h3>
+        <ol class="cv">
+          <li><span class="yr">2026</span><div><span class="role">Finalist</span> <span class="org">Apple iContest intern competition</span></div></li>
+          <li><span class="yr">2026</span><div><span class="role">Honorable mention</span> <span class="org">Stanford Boothe Prize, AI safety paper</span></div></li>
+          <li><span class="yr">2025</span><div><span class="role">Otsuka VALUENEX Award, team</span> <span class="org">TreeHacks XI</span></div></li>
+          <li><span class="yr">2024</span><div><span class="role">Engineering Inspiration Award, team</span> <span class="org">FIRST Robotics World Championship</span></div></li>
+          <li><span class="yr">2024</span><div><span class="role">Team leader</span> <span class="org">International Olympiad in Artificial Intelligence</span></div></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ABOUT ===================== -->
+<section class="section about" id="about" aria-labelledby="about-h">
+  <div class="frame">
+    <div class="sec-title nb">
+      <div class="margin"><span class="anno">Istanbul, then Stanford</span></div>
+      <div class="main"><h2 id="about-h">About</h2></div>
+    </div>
+    <div class="nb">
+      <div class="margin about-margin"></div>
+      <div class="main">
+        <p>I grew up in Istanbul and came to Stanford for computer science, with a minor in electrical engineering. What I like most is the point where an algorithm meets something that pushes back: a robot arm, a modem, a GPU, a board with no operating system.</p>
+        <p>Away from the lab I take photographs, play trumpet, and keep learning languages. The trumpet occasionally crosses over: one of my side projects is a turret that takes its orders from it.</p>
+        <ul class="labs" aria-label="Affiliated labs">
           <li><a href="https://ai.stanford.edu/">Stanford Artificial Intelligence Laboratory (SAIL)</a></li>
           <li><a href="https://svl.stanford.edu/">Stanford Vision and Learning Lab (SVL)</a></li>
           <li><a href="https://tml.stanford.edu/">The Movement Lab (TML)</a></li>
           <li><a href="https://nlp.stanford.edu/">Stanford Natural Language Processing Group</a></li>
         </ul>
       </div>
-
-      <div class="lab">
-        <div class="entry flat">
-          <h3>Stanford Vision and Learning Lab (SVL), Stanford AI Lab</h3>
-          <span class="when">Sep 2026 – now</span>
-          <ul>
-            <li>Built a 30 Hz inference pipeline that feeds camera, proprioceptive and tactile observations to FACT visuomotor policies on a dual-arm YAM manipulation platform.</li>
-            <li>Built live-observation, offline-replay and recording infrastructure (video, HDF5 and metadata) so policy runs can be inspected and reproduced.</li>
-            <li>Evaluated pretrained policies over 381 prediction windows from seven teleoperated episodes and found that zero-shot transfer underperformed simple motion baselines on our hardware.</li>
-            <li>Added non-actuating policy previews, forward/inverse kinematics checks and automated safety preflight checks before anything moves on hardware.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="lab">
-        <div class="entry flat">
-          <h3>Learning from human interventions <span class="badge">In progress</span></h3>
-          <span class="when">CS329H, Fall 2026</span>
-          <ul>
-            <li>Designing a study of supervisor drift: when a person corrects a robot less often after a policy update, is the robot better or does the person just trust it more? Frozen-policy probes and probabilistic intervention models are meant to separate the two.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="lab">
-        <div class="entry flat">
-          <h3>Stanford Natural Language Processing Group, Stanford AI Lab</h3>
-          <span class="when">Apr – Sep 2026</span>
-          <ul>
-            <li>Syntax-aware Transformer pre-pretraining on flattened Universal Dependencies, to study data-efficient language acquisition and how those representations transfer downstream.</li>
-            <li>Designed transformations that turn dependency-annotated sentences into structured training sequences, so the effect of syntactic supervision can be tested in a controlled way.</li>
-          </ul>
-          <!-- TODO: link poster or write-up if public -->
-        </div>
-      </div>
-
-      <div class="lab">
-        <div class="entry flat">
-          <h3>Koç University, Natural Language Processing Research</h3>
-          <span class="when"><!-- TODO: dates --></span>
-          <ul>
-            <li>Built multilingual preprocessing pipelines and benchmarks for metalinguistic reasoning, covering grammatical inference and morphology across many languages.</li>
-            <li>Curated about 300 translated and tokenized linguistics puzzles for reasoning evaluation, and fine-tuned and evaluated GPT, T5 and BERT-family models.</li>
-          </ul>
-          <!-- TODO: add the coauthored paper once its status is confirmed -->
-        </div>
-      </div>
-
-      <div class="lab">
-        <h3>Writing</h3>
-        <p style="margin-top:.6rem">AI safety paper, Stanford Boothe Prize honorable mention (2026).
-          <!-- TODO: link the paper PDF, e.g. <a href="papers/boothe.pdf">Read the paper</a> --></p>
-      </div>
     </div>
   </div>
 </section>
 
-<section id="experience">
-  <div class="wrap sec-head">
-    <h2>Experience</h2>
-    <div>
-      <article class="entry">
-        <h3>Hardware Technology Intern</h3>
-        <span class="when">Jun – Sep 2026</span>
-        <div class="org">Apple</div>
-        <ul>
-          <li>Wrote C/C++ cellular control-plane firmware from L1/PHY specifications for next-generation modem chips.</li>
-          <li>Designed a C++ combinatorial optimization solver to replace a multi-megabyte lookup table, landing within 1 of the proven optimum across 330 workloads.</li>
-          <li>Proved the hardware resource assignment problem NP-hard and built an exact oracle with independent optimality certificates, making certification about 500× faster.</li>
-          <li>Checked the modeled constraints against production C++ logic with mutation-based tests that caught all 16 injected faults.</li>
-        </ul>
-      </article>
-
-      <article class="entry">
-        <h3>Software Engineer Intern</h3>
-        <span class="when">Jun – Sep 2025</span>
-        <div class="org">NewFrame AI</div>
-        <ul>
-          <li>Built a five-stage, multithreaded video-analysis pipeline for a generative AI advertising agent: scene detection, multimodal model analysis, quality checks and structured JSON/CSV export.</li>
-          <li>In testing, the pipeline processed about 2–4 shots a minute at roughly $0.002 per shot, with configurable worker parallelism.</li>
-          <li>Benchmarked 10 text, image and video generation models and fine-tuned LoRA adapters across five content categories to guide which models to integrate.</li>
-        </ul>
-      </article>
-
-      <article class="entry" id="microsoft">
-        <h3>Machine Learning Intern</h3>
-        <span class="when">Jun – Sep 2025</span>
-        <div class="org">Microsoft Turkey</div>
-        <ul>
-          <li>Built and evaluated GRU and LSTM networks in PyTorch for financial and enterprise time-series forecasting, including the preprocessing and training workflow.</li>
-        </ul>
-        <div class="more"><a href="#ts-forecasting">See the forecasting project</a></div>
-      </article>
-
-      <h3 style="margin:2rem 0 .25rem">Earlier</h3>
-      <article class="entry">
-        <h3>AI Intern, OBSS Technology</h3>
-        <span class="when">Aug – Sep 2023</span>
-        <ul><li>Document chunking and preprocessing so language models could summarize PDFs, text files and web pages.</li></ul>
-      </article>
-      <article class="entry">
-        <h3>AI and Data Science Intern, DASAL Aviation</h3>
-        <span class="when">Jul – Sep 2022</span>
-        <ul><li>Predictive modeling on UAV telemetry with TensorFlow and Pandas, plus TCP client-server tooling for moving engineering data.</li></ul>
-      </article>
-      <article class="entry">
-        <h3>Computer Vision Intern, Imona Technologies</h3>
-        <span class="when">Feb 2021 – Aug 2022</span>
-        <ul><li>Trained and fine-tuned YOLO-based detection and tracking models used for customer-traffic monitoring in more than 120 retail stores.</li></ul>
-      </article>
+<!-- ===================== CONTACT ===================== -->
+<section class="section" id="contact" aria-labelledby="contact-h">
+  <div class="frame">
+    <div class="sec-title nb">
+      <div class="margin"><span class="anno">Open to internships</span></div>
+      <div class="main">
+        <h2 id="contact-h">Contact</h2>
+        <p class="dek">I’m looking for internships in robot learning, GPU systems and ML infrastructure. Email reaches me fastest.</p>
+      </div>
     </div>
-  </div>
-</section>
-
-<section id="projects">
-  <div class="wrap sec-head">
-    <h2>Projects</h2>
-    <div>
-      <article class="featured">
-        <h3>From Text to Torque</h3>
-        <p style="margin-top:.6rem">A pipeline that turns text-generated humanoid motions into physically tracked controllers. Kimodo motions for a Unitree G1 become MuJoCo Warp tracking tasks, trained with PPO across 1,024 parallel environments on walking, waving, tapping the head, squatting and jumping.</p>
-        <div class="stats">
-          <div><b>1,024</b>parallel environments</div>
-          <div><b>13.5 → 250</b>squat episode length after fixing termination</div>
-        </div>
-        <p>The interesting failure: strict termination made the squat policy collapse after about 13 steps. Recalibrating the thresholds recovered full 250-step control.</p>
-        <a href="https://github.com/kuzeykantarcioglu/text-to-torque">View on GitHub</a>
-        <ul class="tags"><li>CS224R</li><li>PPO</li><li>MuJoCo Warp</li><li>Unitree G1</li></ul>
-      </article>
-
-      <article class="entry">
-        <h3>GPU-accelerated robot policy inference <span class="badge">In progress</span></h3>
-        <span class="when">Sep 2026 – now</span>
-        <ul>
-          <li>CUDA C++ and Triton kernels for transformer-based visuomotor policies, aimed at launch overhead and memory movement.</li>
-          <li>A profiling and benchmarking workflow in NVIDIA Nsight that compares the custom kernels against PyTorch and TensorRT.</li>
+    <div class="nb">
+      <div class="margin"></div>
+      <div class="main">
+        <ul class="contact-list">
+          <li><span class="anno">Email</span><span class="email">kuzey [at] stanford [dot] edu</span></li>
+          <li><span class="anno">Code</span><a href="https://github.com/kuzeykantarcioglu">github.com/kuzeykantarcioglu</a></li>
+          <li><span class="anno">LinkedIn</span><a href="https://linkedin.com/in/kkuzey">linkedin.com/in/kkuzey</a></li>
         </ul>
-        <!-- TODO: once measured, add median/p99 latency, VRAM, speedup, GPU model and a chart -->
-      </article>
-
-      <article class="entry">
-        <h3>Geometry-aware positional embeddings for 3D reconstruction</h3>
-        <span class="when">CS231N, Spring 2026</span>
-        <ul>
-          <li>Ray-aware Transformer embeddings that ground ViT patch tokens in the camera origin and viewing rays.</li>
-          <li>Controlled ablations against 2D positional, view-ID and camera-pose embeddings on about 2,000 ShapeNet objects; cut sparse-view Chamfer error by 17% with one view and 22% with two.</li>
-        </ul>
-        <!-- TODO: link poster / report -->
-      </article>
-
-      <article class="entry">
-        <h3>Adaptive language tutoring as a POMDP</h3>
-        <span class="when">CS229, Winter 2026</span>
-        <ul>
-          <li>Modeled a learner’s proficiency as a 20-dimensional belief state across five exercise modules, in a Gymnasium environment calibrated by maximum likelihood on Duolingo SLAM response data.</li>
-          <li>Compared PPO, DQN, MPC, LinUCB, curriculum and random policies; PPO did best on cost-adjusted cumulative reward.</li>
-        </ul>
-      </article>
-
-      <article class="entry" id="ts-forecasting">
-        <h3>Time-series forecasting with recurrent networks</h3>
-        <span class="when">Microsoft Turkey, 2025</span>
-        <ul>
-          <li>GRU and LSTM forecasters in PyTorch for financial and enterprise time series.</li>
-          <!-- TODO: what was forecast, horizon, error metric (MAE/RMSE/MAPE), baseline beaten. A public demo on open data works if the original is confidential. -->
-        </ul>
-      </article>
-
-      <article class="entry">
-        <h3>Bare-metal RISC-V operating system and Space Invaders</h3>
-        <span class="when">Feb – Apr 2025</span>
-        <ul>
-          <li>A bare-metal runtime and shell in Assembly and C on a Mango Pi: memory allocation, GPIO, timers, printf, input, integer-only graphics and a system monitor, with no operating system underneath.</li>
-          <li>A Space Invaders remake on top of it, with interrupt-driven I²C, DMA, I²S and SPI drivers for live microphone input, accelerometer control and audio.</li>
-        </ul>
-        <!-- Course code is usually private under the honor code; a demo video works well here -->
-      </article>
-
-      <h3 style="margin-top:2.5rem">Hackathons and side projects</h3>
-      <div class="smaller">
-        <div>
-          <a href="https://github.com/kuzeykantarcioglu/compliance_vision_cloud">Video compliance monitor</a>
-          <p>TreeHacks 2026. Write compliance rules in plain English and check video streams against them with multimodal LLMs, in the cloud or on a local DGX.</p>
-        </div>
-        <div>
-          <strong>Matcha Vibe</strong>
-          <p>TreeHacks XI, Otsuka VALUENEX Award. A Zoom companion that reads speech, gestures and sentiment with Gemini, Groq and ElevenLabs, and adapts an AI avatar and meeting space to the room’s mood.</p>
-          <!-- TODO: link repo or Devpost -->
-        </div>
-        <div>
-          <a href="https://github.com/kuzeykantarcioglu/nerf_turret_sound_control">Trumpet-controlled Nerf turret</a>
-          <p>A Raspberry Pi 5 turret that detects musical notes with an FFT and turns them into stepper-motor aiming and solenoid firing.</p>
-        </div>
-        <div>
-          <a href="https://github.com/kuzeykantarcioglu/PL_dataset_generation">Procedural language dataset generation</a>
-          <p>Using LLMs to generate procedural language examples for text understanding research.</p>
-        </div>
-        <div>
-          <a href="https://github.com/kuzeykantarcioglu/word_prediction_LSTM">Next-word prediction with LSTMs</a>
-          <p>An early language-modeling project with recurrent networks.</p>
-        </div>
-        <div>
-          <strong>Robot perception coursework</strong>
-          <p>EE227: a MiniUNet segmenter at about 0.82 validation mean IoU, TSDF fusion from RGB-D frames to a 3D mesh, and ICP object registration.</p>
-        </div>
       </div>
     </div>
   </div>
 </section>
+</main>
 
-<section id="teaching">
-  <div class="wrap sec-head">
-    <h2>Teaching and teams</h2>
-    <div>
-      <article class="entry">
-        <h3>Section Leader, Stanford CS106</h3>
-        <span class="when"><!-- TODO: dates --></span>
-        <ul><li>Weekly Python and C++ sections, help hours and grading for introductory courses serving more than 800 students.</li></ul>
-      </article>
-      <article class="entry">
-        <h3>Stanford RoboSub</h3>
-        <span class="when"><!-- TODO: dates --></span>
-        <ul><li>Hydrophone sensing, Teensy firmware and ROS 2 components for an autonomous underwater vehicle.</li></ul>
-      </article>
-      <article class="entry">
-        <h3>Team Captain, FIRST Robotics Competition</h3>
-        <span class="when"><!-- TODO: dates --></span>
-        <ul><li>Led a 27-person team through four semi-autonomous robots, and wrote Java control code with motion planning and vision-assisted targeting.</li></ul>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section id="honors">
-  <div class="wrap sec-head">
-    <h2>Honors</h2>
-    <ul class="honors">
-      <li><span>Apple iContest Intern Competition, finalist</span><span>2026</span></li>
-      <li><span>Stanford Boothe Prize, honorable mention for an AI safety paper</span><span>2026</span></li>
-      <li><span>TreeHacks XI, Otsuka VALUENEX Award (team)</span><span>2025</span></li>
-      <li><span>FIRST Robotics World Championship, Engineering Inspiration Award (team)</span><span>2024</span></li>
-      <li><span>International Olympiad in Artificial Intelligence, team leader</span><span>2024</span></li>
-    </ul>
-  </div>
-</section>
-
-<section id="contact">
-  <div class="wrap sec-head">
-    <h2>Contact</h2>
-    <div class="prose">
-      <p>I’m looking for internships in robot learning, GPU systems and ML infrastructure. The quickest way to reach me is <a href="mailto:kuzey@stanford.edu">kuzey@stanford.edu</a>.</p>
-      <p><a href="https://github.com/kuzeykantarcioglu">GitHub</a> &nbsp; <a href="https://linkedin.com/in/kkuzey">LinkedIn</a></p>
-    </div>
-  </div>
-</section>
+<dialog class="viewer" id="viewer" aria-label="Full-resolution image">
+  <div class="bar"><span class="anno" id="viewer-title">Research poster</span><button type="button" id="viewer-close">Close</button></div>
+  <img id="viewer-img" alt="Research poster, From Text to Torque, at full resolution.">
+</dialog>
 
 <footer>
-  <div class="wrap">B.S. Computer Science, minor in Electrical Engineering, Stanford University, expected 2028.</div>
+  <div class="frame">
+    <span class="anno">Kuzey Kantarcıoğlu, 2026. Set in Newsreader and IBM Plex.</span>
+    <a class="anno" href="#top">Back to top</a>
+  </div>
 </footer>
 
 <script>
+/* Fig. 0: two-link arm with analytic IK and an end-effector trace.
+   Idle: traces a lemniscate. Pointer: reaches for it. Reduced motion: one static pose with a drawn trace. */
 (() => {
   const c = document.getElementById('arm');
+  if (!c || !c.getContext) return;
   const ctx = c.getContext('2d');
+  const out = document.getElementById('readout');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let W, H, dpr, target = null, lastMove = 0, t = 0;
+  const root = document.documentElement;
+  let W = 0, H = 0, target = null, lastInput = -1e9, t = 0, ee = null, running = true;
   const trail = [];
-  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const col = n => getComputedStyle(root).getPropertyValue(n).trim();
+  let C = {};
+  const readColors = () => { C = {ink:col('--ink'), ink3:col('--ink-3'), rule:col('--rule'), trace:col('--trace'), paper:col('--paper')}; };
 
   function size(){
-    dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const r = c.getBoundingClientRect();
     W = r.width; H = r.height;
-    c.width = W * dpr; c.height = H * dpr;
+    c.width = Math.round(W*dpr); c.height = Math.round(H*dpr);
     ctx.setTransform(dpr,0,0,dpr,0,0);
+    trail.length = 0; ee = null;
   }
-  function pointer(e){
+  const geom = () => {
+    const s = Math.min(W, H*1.25);
+    return { base:{x:W*0.34, y:H*0.84}, L1:s*0.36, L2:s*0.30 };
+  };
+  function onPointer(e){
     const r = c.getBoundingClientRect();
     target = {x:e.clientX - r.left, y:e.clientY - r.top};
-    lastMove = performance.now();
-    if (reduce) draw();
+    lastInput = performance.now();
+    if (reduce) frame(true);
   }
-  c.addEventListener('pointermove', pointer);
-  c.addEventListener('pointerdown', pointer);
+  c.addEventListener('pointermove', onPointer);
+  c.addEventListener('pointerdown', onPointer);
+  c.addEventListener('pointerleave', () => { lastInput = performance.now() - 1500; });
 
-  let ee = null;
-  function draw(){
-    const base = {x:W*0.5, y:H*0.86};
-    const L1 = Math.min(W,H)*0.33, L2 = Math.min(W,H)*0.27;
-    let goal;
-    if (target && performance.now() - lastMove < 2500) goal = target;
-    else goal = {x: base.x + Math.sin(t*0.9)*L1*0.95, y: base.y - L1*0.9 + Math.sin(t*1.7)*L2*0.55};
-    ee = ee ? {x: ee.x + (goal.x-ee.x)*0.12, y: ee.y + (goal.y-ee.y)*0.12} : goal;
-    if (reduce) ee = goal;
-
-    // two-link IK, elbow up
-    let dx = ee.x - base.x, dy = ee.y - base.y;
-    let d = Math.hypot(dx,dy);
-    const maxR = L1 + L2 - 0.5, minR = Math.abs(L1-L2) + 0.5;
-    const reach = Math.max(minR, Math.min(maxR, d));
-    const ang = Math.atan2(dy,dx);
-    const tx = base.x + Math.cos(ang)*reach, ty = base.y + Math.sin(ang)*reach;
-    const cosE = (reach*reach - L1*L1 - L2*L2)/(2*L1*L2);
-    const q2 = -Math.acos(Math.max(-1,Math.min(1,cosE)));
-    const q1 = ang - Math.atan2(L2*Math.sin(q2), L1 + L2*Math.cos(q2));
-    const elbow = {x: base.x + L1*Math.cos(q1), y: base.y + L1*Math.sin(q1)};
-    const tip = {x: elbow.x + L2*Math.cos(q1+q2), y: elbow.y + L2*Math.sin(q1+q2)};
-
-    trail.push({...tip}); if (trail.length > 70) trail.shift();
-
-    const ink = css('--ink'), acc = css('--accent'), joint = css('--joint'), line = css('--line'), muted = css('--muted');
-    ctx.clearRect(0,0,W,H);
-
-    // workspace
-    ctx.strokeStyle = line; ctx.lineWidth = 1; ctx.setLineDash([4,6]);
-    ctx.beginPath(); ctx.arc(base.x, base.y, L1+L2, Math.PI, 2*Math.PI); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.beginPath(); ctx.moveTo(0, base.y+14); ctx.lineTo(W, base.y+14); ctx.stroke();
-
-    // trail
-    if (!reduce) for (let i=1;i<trail.length;i++){
-      ctx.globalAlpha = i/trail.length*0.6;
-      ctx.strokeStyle = acc; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(trail[i-1].x,trail[i-1].y); ctx.lineTo(trail[i].x,trail[i].y); ctx.stroke();
+  function solve(g, p){
+    const {base, L1, L2} = g;
+    // keep target above the floor and inside the reachable annulus
+    let x = p.x, y = Math.min(p.y, base.y - 6);
+    let dx = x - base.x, dy = y - base.y, d = Math.hypot(dx, dy);
+    const rMax = L1 + L2 - 1, rMin = Math.abs(L1 - L2) + 4;
+    const r = Math.max(rMin, Math.min(rMax, d));
+    const a = Math.atan2(dy, dx);
+    const tx = base.x + Math.cos(a)*r, ty = base.y + Math.sin(a)*r;
+    const cosQ2 = (r*r - L1*L1 - L2*L2) / (2*L1*L2);
+    const q2 = Math.acos(Math.max(-1, Math.min(1, cosQ2)));           // elbow-up in screen coords
+    const q1 = a - Math.atan2(L2*Math.sin(q2), L1 + L2*Math.cos(q2));
+    const elbow = {x:base.x + L1*Math.cos(q1), y:base.y + L1*Math.sin(q1)};
+    let tip = {x:elbow.x + L2*Math.cos(q1+q2), y:elbow.y + L2*Math.sin(q1+q2)};
+    // if elbow-up dips under the floor, use the other branch
+    if (elbow.y > base.y - 4){
+      const q2b = -q2, q1b = a - Math.atan2(L2*Math.sin(q2b), L1 + L2*Math.cos(q2b));
+      return {q1:q1b, q2:q2b, elbow:{x:base.x + L1*Math.cos(q1b), y:base.y + L1*Math.sin(q1b)}, tip:{x:tx, y:ty}};
     }
-    ctx.globalAlpha = 1;
+    return {q1, q2, elbow, tip};
+  }
 
-    // goal marker
-    ctx.strokeStyle = muted; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(goal.x, goal.y, 9, 0, 2*Math.PI); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(goal.x-14,goal.y); ctx.lineTo(goal.x+14,goal.y); ctx.moveTo(goal.x,goal.y-14); ctx.lineTo(goal.x,goal.y+14); ctx.stroke();
+  function idleTarget(g, time){
+    const {base, L1, L2} = g, R = (L1 + L2)*0.5;
+    const s = Math.sin(time), k = 1 + Math.cos(time)*Math.cos(time);
+    return { x: base.x + L1*0.55 + R*0.95*Math.cos(time)/k, y: base.y - (L1+L2)*0.58 - R*0.55*s*Math.cos(time)/k };
+  }
 
-    // base
-    ctx.fillStyle = ink;
-    ctx.fillRect(base.x-26, base.y+2, 52, 12);
-    // links
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = ink; ctx.lineWidth = 16;
-    ctx.beginPath(); ctx.moveTo(base.x,base.y); ctx.lineTo(elbow.x,elbow.y); ctx.stroke();
-    ctx.lineWidth = 11;
-    ctx.beginPath(); ctx.moveTo(elbow.x,elbow.y); ctx.lineTo(tip.x,tip.y); ctx.stroke();
+  function draw(g, sol, goal){
+    const {base} = g;
+    ctx.clearRect(0,0,W,H);
+    // floor with hatching
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, base.y + 10.5); ctx.lineTo(W, base.y + 10.5); ctx.stroke();
+    ctx.strokeStyle = C.rule;
+    for (let x = -20; x < W; x += 9){ ctx.beginPath(); ctx.moveTo(x, base.y + 20); ctx.lineTo(x + 9, base.y + 11); ctx.stroke(); }
+    // reach envelope
+    ctx.setLineDash([2,5]); ctx.strokeStyle = C.rule;
+    ctx.beginPath(); ctx.arc(base.x, base.y, g.L1 + g.L2, Math.PI, 2*Math.PI); ctx.stroke();
+    ctx.setLineDash([]);
+    // trace with time ticks
+    ctx.strokeStyle = C.trace; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    trail.forEach((p,i) => i ? ctx.lineTo(p.x,p.y) : ctx.moveTo(p.x,p.y));
+    ctx.stroke();
+    ctx.fillStyle = C.trace;
+    for (let i = trail.length - 1; i >= 0; i -= 12){ ctx.beginPath(); ctx.arc(trail[i].x, trail[i].y, 1.8, 0, 7); ctx.fill(); }
+    // goal reticle
+    ctx.strokeStyle = C.ink3; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(goal.x, goal.y, 7, 0, 7); ctx.moveTo(goal.x - 12, goal.y); ctx.lineTo(goal.x - 4, goal.y); ctx.moveTo(goal.x + 4, goal.y); ctx.lineTo(goal.x + 12, goal.y); ctx.moveTo(goal.x, goal.y - 12); ctx.lineTo(goal.x, goal.y - 4); ctx.moveTo(goal.x, goal.y + 4); ctx.lineTo(goal.x, goal.y + 12); ctx.stroke();
+    // links as outlined bars (line-drawing style)
+    const bar = (a, b, w) => {
+      const ang = Math.atan2(b.y - a.y, b.x - a.x), nx = -Math.sin(ang)*w, ny = Math.cos(ang)*w;
+      ctx.beginPath();
+      ctx.moveTo(a.x + nx, a.y + ny); ctx.lineTo(b.x + nx, b.y + ny);
+      ctx.arc(b.x, b.y, w, ang + Math.PI/2, ang - Math.PI/2, true);
+      ctx.lineTo(a.x - nx, a.y - ny);
+      ctx.arc(a.x, a.y, w, ang - Math.PI/2, ang + Math.PI/2, true);
+      ctx.closePath();
+      ctx.fillStyle = C.paper; ctx.fill();
+      ctx.strokeStyle = C.ink; ctx.lineWidth = 1.25; ctx.stroke();
+    };
+    // base plinth
+    ctx.fillStyle = C.paper; ctx.strokeStyle = C.ink; ctx.lineWidth = 1.25;
+    ctx.beginPath(); ctx.rect(base.x - 22, base.y, 44, 10.5); ctx.fill(); ctx.stroke();
+    bar(base, sol.elbow, 7);
+    bar(sol.elbow, sol.tip, 5);
     // joints
-    for (const [p,r] of [[base,9],[elbow,7]]){
-      ctx.fillStyle = joint; ctx.beginPath(); ctx.arc(p.x,p.y,r,0,2*Math.PI); ctx.fill();
+    for (const [p, r] of [[base, 3.5], [sol.elbow, 3]]){
+      ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, 7); ctx.fillStyle = C.trace; ctx.fill();
     }
     // gripper
-    const a = q1+q2, g = 11;
-    ctx.strokeStyle = acc; ctx.lineWidth = 4;
+    const a = sol.q1 + sol.q2, g2 = 9;
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(tip.x + Math.cos(a+1.2)*g, tip.y + Math.sin(a+1.2)*g);
-    ctx.lineTo(tip.x, tip.y);
-    ctx.lineTo(tip.x + Math.cos(a-1.2)*g, tip.y + Math.sin(a-1.2)*g);
+    ctx.moveTo(sol.tip.x + Math.cos(a + 1.1)*g2, sol.tip.y + Math.sin(a + 1.1)*g2);
+    ctx.lineTo(sol.tip.x, sol.tip.y);
+    ctx.lineTo(sol.tip.x + Math.cos(a - 1.1)*g2, sol.tip.y + Math.sin(a - 1.1)*g2);
     ctx.stroke();
+    // joint-angle readout (true values, base frame, y up)
+    if (out){
+      const deg = v => (v*180/Math.PI).toFixed(0).padStart(4, '\u2007');
+      out.textContent = `q\u2081 ${deg(-sol.q1)}°  q\u2082 ${deg(-sol.q2)}°`;
+    }
   }
-  function loop(){ t += 0.016; draw(); requestAnimationFrame(loop); }
 
-  size(); addEventListener('resize', () => { size(); draw(); });
-  if (reduce) draw(); else loop();
+  function frame(force){
+    const g = geom();
+    const now = performance.now();
+    const userActive = target && now - lastInput < 2200;
+    const goal = userActive ? target : idleTarget(g, t);
+    ee = (!ee || reduce) ? {...goal} : {x: ee.x + (goal.x - ee.x)*0.14, y: ee.y + (goal.y - ee.y)*0.14};
+    const sol = solve(g, ee);
+    trail.push({...sol.tip}); if (trail.length > 140) trail.shift();
+    draw(g, sol, goal);
+  }
+
+  function loop(){ if (running){ t += 0.012; frame(); } requestAnimationFrame(loop); }
+
+  readColors(); size();
+  { const g = geom(); for (let i = 0; i < 140; i++){ t += 0.012; trail.push(solve(g, idleTarget(g, t)).tip); } ee = trail[trail.length-1]; trail.shift(); }
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { readColors(); if (reduce) frame(true); });
+  addEventListener('resize', () => { size(); const g = geom(); for (let i = 0; i < 140; i++) trail.push(solve(g, idleTarget(g, t - (140-i)*0.012)).tip); if (reduce) staticPlate(); });
+  // pause when off-screen
+  new IntersectionObserver(([e]) => { running = e.isIntersecting; }).observe(c);
+
+  function staticPlate(){
+    const g = geom();
+    trail.length = 0;
+    for (let i = 0; i < 140; i++){ trail.push(solve(g, idleTarget(g, 0.6 + i*0.032)).tip); }
+    const last = idleTarget(g, 0.6 + 139*0.032);
+    draw(g, solve(g, last), last);
+  }
+  if (reduce) staticPlate(); else loop();
+})();
+</script>
+<script>
+(() => {
+  const d = document.getElementById('viewer'), img = document.getElementById('viewer-img');
+  if (!d || typeof d.showModal !== 'function') return;   // no dialog support: links open the file directly
+  document.querySelectorAll('a.poster-open').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); img.src = a.getAttribute('href'); const t = a.dataset.title || 'Research poster'; document.getElementById('viewer-title').textContent = t; img.alt = t + ', full resolution.'; d.showModal();
+  }));
+  document.getElementById('viewer-close').addEventListener('click', () => d.close());
+  d.addEventListener('click', e => { if (e.target === d) d.close(); });
 })();
 </script>
 </body>
