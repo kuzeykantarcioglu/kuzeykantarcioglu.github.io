@@ -184,6 +184,9 @@ h1,h2,h3{font-family:var(--serif);font-weight:500;margin:0;letter-spacing:-.01em
 .photo.narrow{max-width:420px}
 @media (max-width:760px){.split{grid-template-columns:1fr}}
 .entry .photo{margin:.8rem 0 .2rem}
+.entry{min-width:0}
+.entry.wide{grid-column:1/-1}
+.entry.wide p,.entry.wide .fig{max-width:66ch}
 .photo.wide{max-width:100%}
 .case .telling p strong{font:500 .92rem/1 var(--sans);color:var(--ink);margin-right:.35rem}
 .viewer{border:0;padding:0;max-width:min(96vw,1600px);max-height:94vh;background:var(--paper);color:var(--ink)}
@@ -614,10 +617,42 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
           <h3>Recurrent forecasting for enterprise time series</h3>
           <p>GRU and LSTM forecasters in PyTorch for financial and enterprise data, including the preprocessing and training workflow.</p>
         </article>
-        <article class="entry">
-          <span class="status">Ongoing, CS329H</span>
-          <h3>Separating policy improvement from changing human trust</h3>
-          <p>If supervisors intervene less after a policy update, either the robot improved or the supervisor’s beliefs shifted. I’m designing a study to tell those apart using frozen-policy probes, Bayesian belief updates and logistic intervention models fit by MLE and MAP estimation. Current stage: study design and pre-analysis plan.</p>
+        <article class="entry wide" id="interventions">
+          <span class="status">Ongoing, Stanford CS329H (Machine Learning from Human Preferences), Fall 2026</span>
+          <h3>Learning from human interventions under changing supervisor beliefs</h3>
+          <p>When a person stops correcting a robot, has the robot improved, or has the person simply started trusting it? Most learning-from-intervention methods read every takeover as evidence that the robot made a bad decision. But a supervisor’s behavior can drift while the policy stays exactly the same, and a learner that ignores this will misread the feedback.</p>
+          <figure class="fig">
+            <div class="scroll" tabindex="0" role="region" aria-label="Figure, scrolls sideways on small screens"><svg viewBox="0 0 620 186" role="img" aria-labelledby="fh1">
+              <title id="fh1">Conceptual illustration: the same robot trajectory, with the same uncertain step, shown twice. After a history of failures the supervisor is more likely to intervene; after a history of successes, more likely to wait.</title>
+              <g transform="translate(0,0)">
+              <text class="lab" x="0" y="14">history: recent failures</text>
+              <rect class="box" x="0" y="24" width="270" height="110"/>
+              <circle class="ink" cx="40" cy="104" r="11"/><text x="28" y="128">start</text>
+              <path class="tr" d="M51 98 L118 72" stroke-dasharray="5 4"/>
+              <rect class="box" x="118" y="58" width="26" height="26" style="stroke:var(--trace)"/><text x="92" y="100">uncertain step</text>
+              <path class="ink" d="M156 52 L156 80" style="stroke-width:2.5"/><text x="164" y="58">takeover</text>
+              <circle class="ink" cx="230" cy="42" r="11"/><text x="216" y="68">goal</text>
+              <text class="big" x="0" y="156">more likely to intervene</text>
+              <text x="0" y="172">same policy, same step</text>
+            </g>
+              <g transform="translate(330,0)">
+              <text class="lab" x="0" y="14">history: recent successes</text>
+              <rect class="box" x="0" y="24" width="270" height="110"/>
+              <circle class="ink" cx="40" cy="104" r="11"/><text x="28" y="128">start</text>
+              <path class="tr" d="M51 98 L118 72" stroke-dasharray="5 4"/>
+              <rect class="box" x="118" y="58" width="26" height="26" style="stroke:var(--trace)"/><text x="92" y="100">uncertain step</text>
+              <path class="tr" d="M144 66 L218 46" stroke-dasharray="5 4"/>
+              <circle class="ink" cx="230" cy="42" r="11"/><text x="216" y="68">goal</text>
+              <text class="big" x="0" y="156">more likely to wait</text>
+              <text x="0" y="172">same policy, same step</text>
+            </g>
+            </svg></div>
+            <figcaption class="anno"><b>Fig. 14</b> Conceptual illustration of the hypothesis, not a result. The robot’s behavior is identical in both panels; only the supervisor’s history differs. Frozen-policy probes test exactly this.</figcaption>
+          </figure>
+          <p><strong>Model</strong>I represent the supervisor’s changing belief about the robot’s competence, connect it to each intervene-or-wait decision with a binary-choice (logit) model of expected value against intervention cost, and recover the stable underlying reward by MLE and MAP estimation.</p>
+          <p><strong>The key control</strong>Frozen-policy probes replay matched robot behavior after different supervisor histories. If interventions change on those probes, the change came from the supervisor, not the policy.</p>
+          <p><strong>Evaluation plan</strong>Ten scripted policy checkpoints, matched probes and paired seeds, compared against stationary and per-round models, including supervisors who update by a Beta–Bernoulli rule the learner does not assume. Scored on both held-out intervention prediction and reward recovery, not just on predicting fewer interventions.</p>
+          <p><strong>Status</strong>Pre-analysis plan complete; experiments and write-up in progress.</p>
         </article>
       </div>
     </div>
@@ -655,11 +690,26 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
         <h3 class="sub">Other projects</h3>
         <ul class="index">
           <li><a class="t" href="https://github.com/kuzeykantarcioglu/compliance_vision_cloud">Video compliance monitor</a><p>TreeHacks 2026. Compliance rules in plain English, checked against video streams by multimodal LLMs, in the cloud or on a local DGX.</p></li>
-          <li><span class="t">Matcha Vibe</span><p>TreeHacks XI, team winner of the Otsuka VALUENEX Award. A Zoom companion that reads speech, gesture and sentiment and adapts an AI avatar to the room.</p></li>
+          <li><a class="t" href="https://devpost.com/kuzey">Matcha Vibe</a><p>TreeHacks XI, team winner of the Otsuka VALUENEX Award. A Zoom companion that reads speech, gesture and sentiment in real time and adapts an AI avatar and the meeting environment to the room. Zoom API, Gemini, Groq, ElevenLabs, Luma, Node.js and WebSockets.</p></li>
           <li><a class="t" href="https://github.com/kuzeykantarcioglu/nerf_turret_sound_control">Trumpet-controlled turret</a><p>EE14N, with Chisa Ogaki. A Raspberry Pi 5 turret: a 2048-sample FFT picks out trumpet notes, G and B pan a stepper-driven platform, and D fires a solenoid-triggered Nerf blaster.</p></li>
-          <li><span class="t">Robot perception coursework</span><p>EE227. MiniUNet segmentation at about 0.82 validation mean IoU, TSDF fusion from RGB-D to a mesh, ICP registration.</p></li>
           <li><a class="t" href="https://github.com/kuzeykantarcioglu/PL_dataset_generation">Procedural language datasets</a><p>LLM-generated procedural language examples for text understanding research.</p></li>
           <li><a class="t" href="https://github.com/kuzeykantarcioglu/word_prediction_LSTM">Next-word prediction</a><p>An early language model with LSTMs.</p></li>
+        </ul>
+
+        <h3 class="sub">Coursework</h3>
+        <ul class="index">
+          <li><span class="t">CS329H · Machine Learning from Human Preferences</span><p>Current. Preference models such as Bradley–Terry, RLHF and DPO, active elicitation, bandits. Project: <a href="#interventions">learning from human interventions</a>.</p></li>
+          <li><span class="t">EE227 · Robot Perception</span><p>Current. MiniUNet segmentation at about 0.82 validation mean IoU, TSDF fusion of RGB-D frames into a mesh, and ICP registration compared under predicted and ground-truth masks.</p></li>
+          <li><span class="t">CS224R · Deep Reinforcement Learning</span><p>Policy gradients and PPO, model-based RL, learning from demonstrations. Project: <a href="#text-to-torque">From Text to Torque</a>.</p></li>
+          <li><span class="t">CS231N · Deep Learning for Computer Vision</span><p>Vision Transformers, representation learning, 3D vision. Project: <a href="#reconstruction">geometry-aware reconstruction</a>.</p></li>
+          <li><span class="t">CS229 · Machine Learning</span><p>Probabilistic models, optimization, supervised learning and RL. Project: <a href="#notebook">tutoring as a POMDP</a>.</p></li>
+          <li><span class="t">CS124 · From Languages to Information</span><p>NLP, information retrieval, language models and Transformers.</p></li>
+          <li><span class="t">CS25 · Transformers United</span><p>Research seminar on Transformers and their applications.</p></li>
+          <li><span class="t">CS109 · Probability for Computer Scientists</span><p>The probabilistic foundations under most of the above.</p></li>
+          <li><span class="t">CS107E · Computer Systems from the Ground Up</span><p>Bare-metal RISC-V, peripherals and drivers. Project: <a href="#risc-v">the runtime and game</a>.</p></li>
+          <li><span class="t">CS111 · Operating Systems</span><p>Concurrency, memory and file systems, systems abstractions.</p></li>
+          <li><span class="t">CS161 · Design and Analysis of Algorithms</span><p>Algorithm design, complexity and proof.</p></li>
+          <li><span class="t">CS259Q · Quantum Computing</span><p>Quantum algorithms and complexity.</p></li>
         </ul>
 
         <h3 class="sub">Honors</h3>
@@ -667,8 +717,11 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
           <li><span class="yr">2026</span><div><span class="role">Finalist</span> <span class="org">Apple iContest intern competition</span></div></li>
           <li><span class="yr">2026</span><div><span class="role">Honorable mention</span> <span class="org">Stanford Boothe Prize, AI safety paper</span></div></li>
           <li><span class="yr">2025</span><div><span class="role">Otsuka VALUENEX Award, team</span> <span class="org">TreeHacks XI</span></div></li>
-          <li><span class="yr">2024</span><div><span class="role">Engineering Inspiration Award, team</span> <span class="org">FIRST Robotics World Championship</span></div></li>
-          <li><span class="yr">2024</span><div><span class="role">Team leader</span> <span class="org">International Olympiad in Artificial Intelligence</span></div></li>
+          <li><span class="yr">2024</span><div><span class="role">Team leader, Türkiye</span> <span class="org">International Olympiad in Artificial Intelligence</span></div></li>
+          <li><span class="yr">2024</span><div><span class="role">Engineering Inspiration Award, team</span> <span class="org">FIRST Championship, Hopper Division (Team 8159)</span></div></li>
+          <li><span class="yr">2023</span><div><span class="role">Regional winners, team</span> <span class="org">FIRST New York City Regional (Team 8159)</span></div></li>
+          <li><span class="yr">2023</span><div><span class="role">Türkiye national team competitor</span> <span class="org">International Linguistics Olympiad</span></div></li>
+          <li><span class="yr">2023</span><div><span class="role">Honorary mention</span> <span class="org">Baltic Sea Philosophy Essay Event</span></div></li>
         </ol>
       </div>
     </div>
