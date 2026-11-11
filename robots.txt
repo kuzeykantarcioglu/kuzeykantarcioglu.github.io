@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kuzeykantarcioglu.github.io/sitemap.xml
