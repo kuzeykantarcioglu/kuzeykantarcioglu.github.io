@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kuzey Kantarcıoğlu · Stanford CS · Robot learning, optimization, systems</title>
-<meta name="description" content="Kuzey Kantarcioglu (Kantarcıoğlu), Stanford CS student. Robot learning research at the Stanford AI Lab; C++ optimization and verification at Apple; CUDA inference; research posters and code.">
+<meta name="description" content="Kuzey Kantarcioglu (Kantarcıoğlu), Stanford CS student. Robot learning research at the Stanford AI Lab; optimization and verification at Apple; CUDA inference; research posters and code.">
 <meta name="author" content="Kuzey Kantarcıoğlu">
 <link rel="canonical" href="https://kuzeykantarcioglu.github.io/">
 <meta property="og:type" content="website">
@@ -300,7 +300,7 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
       </figure>
     </div>
     <ol class="contents" aria-label="Selected work at a glance">
-      <li><a href="#apple"><span class="anno">Apple, 2026</span><span class="t">Proof-backed optimization for cellular hardware</span><span class="r">Within 1 of optimum across 330 workloads; ~500× faster certification; 16/16 faults caught</span></a></li>
+      <li><a href="#apple"><span class="anno">Apple, 2026</span><span class="t">Proof-backed optimization for cellular hardware</span><span class="r">140/141 of the proven optimum; ~518× faster optimality certification; findings informed firmware design</span></a></li>
       <li><a href="#robot-learning"><span class="anno">Stanford SVL, ongoing</span><span class="t">Robot policy evaluation on real hardware</span><span class="r">30 Hz observation pipeline; 381 prediction windows evaluated offline</span></a></li>
       <li><a href="#text-to-torque"><span class="anno">CS224R, 2026</span><span class="t">From Text to Torque</span><span class="r">PPO on 1,024 environments; reference selection as an RL intervention</span></a></li>
       <li><a href="#reconstruction"><span class="anno">CS231N, 2026</span><span class="t">Geometry-aware 3D reconstruction</span><span class="r">Chamfer error down 17% (1 view) and 22% (2 views); F-score up 29% and 27%</span></a></li>
@@ -331,14 +331,14 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
       <div class="main">
         <h3 id="c2">Proof-backed optimization for cellular hardware</h3>
         <p class="lede">At Apple, I worked on a hardware resource-allocation problem that called for more than a fast algorithm: I wanted to know how good a solution could be, and how we could prove it.</p>
-        <p class="lede">I developed optimization and verification tools in Python and C++, proved the underlying problem NP-hard, and evaluated solutions across <span class="num">330</span> workloads. They came within <span class="num">one unit</span> of the certified optimum, while an independent verification workflow achieved approximately <span class="num">500×</span> faster certification in internal benchmarks.</p>
+        <p class="lede">I worked out what the production system actually enforced, formalized the problem and proved it NP-hard, and built a prototype that finds a valid assignment in about <span class="num">0.09 ms</span> and reaches <span class="num">140</span> of a proven maximum of <span class="num">141</span>. To check answers cheaply, I derived upper bounds that certify optimality about <span class="num">518×</span> faster than exact verification on certifiable requests. My findings informed firmware design decisions.</p>
         <figure class="fig">
           <div class="scroll" tabindex="0" role="region" aria-label="Figure, scrolls sideways on small screens"><svg viewBox="0 0 620 272" role="img" aria-labelledby="fa1">
             <title id="fa1">Conceptual diagram: each workload goes to a candidate solver and to an exact branch-and-bound solver; their results are compared. Below, a constraint model is reconstructed from both the specification and the production implementation, and mutation tests check it.</title>
             <rect class="box" x="0" y="55" width="92" height="36"/><text class="lab" x="12" y="77">workload</text>
             <path class="ink" d="M92 73 H116 V30 H140 M116 73 V116 H140"/>
-            <rect class="box" x="140" y="10" width="176" height="40"/><text class="lab" x="152" y="27">candidate solver</text><text x="152" y="42">Python, C++</text>
-            <rect class="box" x="140" y="96" width="176" height="40"/><text class="lab" x="152" y="113">exact branch-and-bound</text><text x="152" y="128">two independent checks</text>
+            <rect class="box" x="140" y="10" width="176" height="40"/><text class="lab" x="152" y="27">candidate solver</text><text x="152" y="42">Python prototype</text>
+            <rect class="box" x="140" y="96" width="176" height="40"/><text class="lab" x="152" y="113">exact branch-and-bound</text><text x="152" y="128">+ admissible bounds</text>
             <path class="ink" d="M316 30 H346 M316 116 H346"/>
             <rect class="box" x="346" y="10" width="112" height="40"/><text class="lab" x="358" y="34">solution</text>
             <rect class="box" x="346" y="96" width="112" height="40"/><text class="lab" x="358" y="113">proven optimum</text><text x="358" y="128">+ certificate</text>
@@ -360,9 +360,12 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
         <details class="more">
           <summary><span class="open">Case study</span><span class="close">Hide case study</span></summary>
           <div class="body">
-            <p><strong>Exact verification.</strong>The certification side is an exact branch-and-bound solver backed by two independent optimality checks, so every candidate solution is measured against a proven optimum rather than a best guess.</p>
-            <p><strong>Specification versus implementation.</strong>A solver is only as correct as its constraint model, so I checked whether the hardware specifications agreed with what the production C++ actually did. I reverse-engineered the production constraint logic and built constraint-analysis tooling that identified discrepancies in <span class="num">3</span> of the <span class="num">5</span> constraint dimensions I modeled, along with a mutation-testing framework that detected all <span class="num">16</span> injected faults.</p>
-            <p><strong>Theory and tradeoffs.</strong>I proved the resource-allocation problem NP-hard and explored alternative formulations, including minimum edge cover, to characterize exact solutions and hardware-configuration tradeoffs. I also investigated repair and bound-tightening improvements. Together with performance analysis, that decided which approaches were both mathematically possible and worth implementing.</p>
+            <p><strong>The real constraints.</strong>A faster solver is useless if it solves the wrong problem. Reading the production C++ showed that 3 of the 5 constraint dimensions I had first assumed were modeled wrong; some apparent rules were never actually enforced, and others worked differently than they first appeared. I built a source-level analysis tool that separates constraints the code merely references from those it actually enforces, and planted defects to test it: it caught <span class="num">16/16</span>.</p>
+            <p><strong>A problem I could reason about.</strong>I formalized the assignment as constrained set packing, with a per-request token that makes “one choice per request” part of the math rather than a special case, and checked the mapping both ways (<span class="num">330/330</span> and <span class="num">250/250</span>). Three independent reductions show it is NP-hard; one was checked on <span class="num">4,160</span> instances. Resource counts in practice are small, which made exact search worth trying, though not every exact method survived: a bitmask dynamic program blew up on interacting dimensions.</p>
+            <p><strong>Ground truth.</strong>An exact branch-and-bound oracle gives the provable optimum for each benchmark request, so every method is measured against the best possible answer instead of against another heuristic. On the primary configuration, full exact verification averaged about <span class="num">430 ms</span> per request, too slow for the online path.</p>
+            <p><strong>Cheap certificates.</strong>Each of three relaxations drops some constraints, so its optimum can never be lower than the real one. The tightest of the three is a valid upper bound; when a candidate reaches it, the candidate is provably optimal with no exhaustive search. Certification averaged about <span class="num">0.83 ms</span>, roughly <span class="num">518×</span> faster, and the bound matched the true optimum on <span class="num">275</span> of <span class="num">330</span> requests across 11 configurations with zero violations.</p>
+            <p><strong>Coupled repair.</strong>Single-variable local search kept stalling, because some bad assignments can only be fixed by changing two linked choices together. A joint repair move did that, cutting one benchmark’s gap from 6 to 1. The integrated prototype reached 140 of a proven 141; the existing engine reached 141, so the gain is the built-in proof of quality, not a higher count.</p>
+            <p><strong>Rigor.</strong>Twenty methods were judged against six criteria fixed before benchmarking, and four were rejected. Eleven falsifiable test suites and a reproducibility harness re-derive the headline numbers. The prototype is Python, so its timings describe the algorithms, not a device.</p>
             <p><strong>Also.</strong>Cellular control-plane firmware in C and C++, written from L1/PHY specifications. Finalist, Apple iContest intern competition, 2026.</p>
           </div>
         </details>
@@ -673,7 +676,7 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
       <div class="main">
         <ol class="cv" reversed>
           <li><span class="yr">2026 to now</span><div><span class="role">Undergraduate Researcher</span> <span class="org">Stanford Vision and Learning Lab, Stanford AI Lab</span></div><p>Inference, evaluation and safety infrastructure for pretrained policies on dual-arm YAM robots. <a href="#robot-learning">Case study</a></p></li>
-          <li><span class="yr">2026</span><div><span class="role">Hardware Technology Intern</span> <span class="org">Apple</span></div><p>Combinatorial optimization in Python and C++, exact branch-and-bound certification, NP-hardness proof, verification of production constraint logic; control-plane firmware. <a href="#apple">Case study</a></p></li>
+          <li><span class="yr">2026</span><div><span class="role">Hardware Technology Intern</span> <span class="org">Apple</span></div><p>NP-hardness proof, set-packing formulation, admissible-bound optimality certificates and constraint verification in a Python prototype; findings informed firmware design. Control-plane firmware in C/C++. <a href="#apple">Case study</a></p></li>
           <li><span class="yr">2026</span><div><span class="role">Undergraduate Researcher</span> <span class="org">Stanford NLP Group, Stanford AI Lab</span></div><p>Syntax-aware Transformer pre-pretraining. <a href="#notebook">Research</a></p></li>
           <li><span class="yr">2025</span><div><span class="role">Software Engineer Intern</span> <span class="org">NewFrame AI</span></div><p>A five-stage, multithreaded pipeline that breaks video ads into shots and analyzes each one for a generative AI advertising agent: scene detection, multimodal analysis, quality checks and structured export. In testing it handled 2–4 shots a minute at about $0.002 a shot. I also benchmarked 10 generation models and fine-tuned LoRA adapters across five categories.</p></li>
           <li><span class="yr">2025</span><div><span class="role">Machine Learning Intern</span> <span class="org">Microsoft Turkey</span></div><p>GRU and LSTM time-series forecasting in PyTorch. <a href="#forecasting">Research</a></p></li>
