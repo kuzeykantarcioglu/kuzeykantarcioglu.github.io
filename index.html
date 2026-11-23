@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="google-site-verification" content="yxpZfZyu5wsHfEbg9OK0h2QH_OeZK2lpVQ-3EVg9K5k" />
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kuzey Kantarcıoğlu · Stanford CS · Robot learning, optimization, systems</title>
 <meta name="description" content="Kuzey Kantarcioglu (Kantarcıoğlu), Stanford CS student. Robot learning research at the Stanford AI Lab; optimization and verification at Apple; CUDA inference; research posters and code.">
 <meta name="author" content="Kuzey Kantarcıoğlu">
+<meta name="google-site-verification" content="yxpZfZyu5wsHfEbg9OK0h2QH_OeZK2lpVQ-3EVg9K5k" />
 <link rel="canonical" href="https://kuzeykantarcioglu.github.io/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Kuzey Kantarcıoğlu">
@@ -186,6 +186,7 @@ h1,h2,h3{font-family:var(--serif);font-weight:500;margin:0;letter-spacing:-.01em
 .photo.narrow{max-width:420px}
 @media (max-width:760px){.split{grid-template-columns:1fr}}
 .entry .photo{margin:.8rem 0 .2rem}
+sup{font-size:.7em;line-height:0}
 .entry{min-width:0}
 .entry.wide{grid-column:1/-1}
 .entry.wide p,.entry.wide .fig{max-width:66ch}
@@ -305,7 +306,7 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
       <li><a href="#text-to-torque"><span class="anno">CS224R, 2026</span><span class="t">From Text to Torque</span><span class="r">PPO on 1,024 environments; reference selection as an RL intervention</span></a></li>
       <li><a href="#reconstruction"><span class="anno">CS231N, 2026</span><span class="t">Geometry-aware 3D reconstruction</span><span class="r">Chamfer error down 17% (1 view) and 22% (2 views); F-score up 29% and 27%</span></a></li>
       <li><a href="#risc-v"><span class="anno">2025</span><span class="t">Bare-metal RISC-V system</span><span class="r">Runtime, shell and interrupt-driven drivers in C and assembly</span></a></li>
-      <li><a href="#gpu"><span class="anno">Ongoing</span><span class="t">CUDA and Triton policy inference</span><span class="r">Kernel optimization; benchmarking in progress</span></a></li>
+      <li><a href="#gpu"><span class="anno">CS329H, ongoing</span><span class="t">Fused CUDA kernel for intervention inference</span><span class="r">3.81–24.97× lower latency than eager GPU PyTorch on an L40S</span></a></li>
     </ol>
   </section>
 </div>
@@ -571,15 +572,16 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
 
     <article class="case nb compact" id="gpu" aria-labelledby="c3">
       <div class="margin">
-        <span class="meta-org">Independent project</span>
+        <span class="meta-org">Stanford CS329H</span>
         <span class="anno">Sep 2026 to now</span>
-        <span class="anno">CUDA C++, Triton, Nsight</span>
+        <span class="anno">CUDA C++, PyTorch, NVIDIA L40S</span>
         <span class="status">Ongoing</span>
       </div>
       <div class="main">
-        <h3 id="c3">CUDA and Triton kernels for visuomotor policy inference</h3>
-        <p class="lede">I’m exploring how to make transformer-based robot policies run faster by working below the model level, in CUDA C++ and Triton kernels.</p>
-        <p class="lede">The focus is kernel fusion, memory traffic, and profiling with NVIDIA Nsight, with comparisons against optimized PyTorch and TensorRT implementations.</p>
+        <h3 id="c3">A fused CUDA kernel for human-intervention inference</h3>
+        <p class="lede">For my <a href="#interventions">CS329H study of supervisor drift</a>, I developed a GPU-accelerated Bayesian intervention-inference framework for the frozen-policy evaluations. Its core is a fused CUDA C++ kernel for FP64 likelihood and gradient evaluation.</p>
+        <p class="lede">It achieves <span class="num">3.81–24.97×</span> lower latency than eager GPU PyTorch on an NVIDIA L40S across batch sizes 1–256, with a maximum absolute error of 2.22 × 10<sup>−16</sup>.</p>
+        <p class="lede">I’m also exploring how to make transformer-based robot policies run faster by working below the model level, in CUDA C++ and Triton kernels, with Nsight profiling and comparisons against optimized PyTorch and TensorRT.</p>
       </div>
     </article>
   </div>
@@ -657,7 +659,8 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
           <p><strong>Model</strong>I represent the supervisor’s changing belief about the robot’s competence, connect it to each intervene-or-wait decision with a binary-choice (logit) model of expected value against intervention cost, and recover the stable underlying reward by MLE and MAP estimation.</p>
           <p><strong>The key control</strong>Frozen-policy probes replay matched robot behavior after different supervisor histories. If interventions change on those probes, the change came from the supervisor, not the policy.</p>
           <p><strong>Evaluation plan</strong>Ten scripted policy checkpoints, matched probes and paired seeds, compared against stationary and per-round models, including supervisors who update by a Beta–Bernoulli rule the learner does not assume. Scored on both held-out intervention prediction and reward recovery, not just on predicting fewer interventions.</p>
-          <p><strong>Status</strong>Pre-analysis plan complete; experiments and write-up in progress.</p>
+          <p><strong>GPU inference</strong>The framework’s fused CUDA C++ kernel evaluates the FP64 likelihood and gradient at <span class="num">3.81–24.97×</span> lower latency than eager GPU PyTorch on an NVIDIA L40S (batch sizes 1–256), with maximum absolute error 2.22 × 10<sup>−16</sup>. <a href="#gpu">Details</a></p>
+          <p><strong>Status</strong>Pre-analysis plan complete and the inference kernel benchmarked; experiments and write-up in progress.</p>
         </article>
       </div>
     </div>
@@ -678,9 +681,9 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
           <li><span class="yr">2026 to now</span><div><span class="role">Undergraduate Researcher</span> <span class="org">Stanford Vision and Learning Lab &amp; The Movement Lab, Stanford AI Lab</span></div><p>Inference, evaluation and safety infrastructure for pretrained policies on dual-arm YAM robots. <a href="#robot-learning">Case study</a></p></li>
           <li><span class="yr">2026</span><div><span class="role">Hardware Technology Intern</span> <span class="org">Apple</span></div><p>NP-hardness proof, set-packing formulation, admissible-bound optimality certificates and constraint verification in a Python prototype; findings informed firmware design. Control-plane firmware in C/C++. <a href="#apple">Case study</a></p></li>
           <li><span class="yr">2026</span><div><span class="role">Undergraduate Researcher</span> <span class="org">Stanford NLP Group, Stanford AI Lab</span></div><p>Syntax-aware Transformer pre-pretraining. <a href="#notebook">Research</a></p></li>
-          <li><span class="yr">2025</span><div><span class="role">Software Engineer Intern</span> <span class="org">NewFrame AI</span></div><p>A five-stage, multithreaded pipeline that breaks video ads into shots and analyzes each one for a generative AI advertising agent: scene detection, multimodal analysis, quality checks and structured export. In testing it handled 2–4 shots a minute at about $0.002 a shot. I also benchmarked 10 generation models and fine-tuned LoRA adapters across five categories.</p></li>
+          <li><span class="yr">2025</span><div><span class="role">Software Engineer Intern</span> <span class="org">NewFrame AI</span></div><p>Agent workflows for a generative AI advertising platform, built with LangGraph, Google ADK and CrewAI, with background infrastructure on Google Cloud and generation grounded by vector-database retrieval (RAG). I also built the agent’s five-stage, multithreaded video-analysis pipeline: scene detection, concurrent Gemini analysis, quality checks and structured export, at 2–4 shots a minute and about $0.002 a shot in testing. Benchmarked 10 generation models and fine-tuned LoRA adapters across five categories.</p></li>
           <li><span class="yr">2025</span><div><span class="role">Machine Learning Intern</span> <span class="org">Microsoft Turkey</span></div><p>GRU and LSTM time-series forecasting in PyTorch. <a href="#forecasting">Research</a></p></li>
-          <li><span class="yr">2023</span><div><span class="role">AI Intern</span> <span class="org">OBSS Technology</span></div><p>Document chunking and preprocessing for language-model summarization of PDFs, text files and web pages.</p></li>
+          <li><span class="yr">2023</span><div><span class="role">AI Intern</span> <span class="org">OBSS Technology</span></div><p>Document chunking and preprocessing for RAG-based language-model summarization of PDFs, text files and web pages.</p></li>
           <li><span class="yr">2022</span><div><span class="role">AI and Data Science Intern</span> <span class="org">DASAL Aviation</span></div><p>Predictive modeling on UAV telemetry; TCP tooling for engineering data.</p></li>
           <li><span class="yr">2021 to 2022</span><div><span class="role">Computer Vision Intern</span> <span class="org">Imona Technologies</span></div><p>Trained and fine-tuned YOLO-based detection and tracking models for a customer-traffic analytics system used in more than 120 retail stores.</p></li>
         </ol>
@@ -694,7 +697,7 @@ footer .frame{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap
 
         <h3 class="sub">Other projects</h3>
         <ul class="index">
-          <li><a class="t" href="https://github.com/kuzeykantarcioglu/compliance_vision_cloud">Video compliance monitor</a><p>TreeHacks 2026. Compliance rules in plain English, checked against video streams by multimodal LLMs, in the cloud or on a local DGX.</p></li>
+          <li><a class="t" href="https://github.com/kuzeykantarcioglu/compliance_vision_cloud">Agent 00Vision: video compliance agent</a><p>TreeHacks 2026. Policy-as-prompt: rules written in plain English are checked against live or uploaded video by a vision-model plus LLM pipeline (FastAPI, Celery, WebSockets, React), producing structured JSON audit reports, with an AI assistant for writing policies. Runs on cloud models (GPT-4o, Whisper) or on-premise NVIDIA DGX for data residency; change-detection frame sampling cuts vision-model calls by 80–95%.</p></li>
           <li><a class="t" href="https://devpost.com/kuzey">Matcha Vibe</a><p>TreeHacks XI, team winner of the Otsuka VALUENEX Award. A Zoom companion that reads speech, gesture and sentiment in real time and adapts an AI avatar and the meeting environment to the room. Zoom API, Gemini, Groq, ElevenLabs, Luma, Node.js and WebSockets.</p></li>
           <li><a class="t" href="https://github.com/kuzeykantarcioglu/nerf_turret_sound_control">Trumpet-controlled turret</a><p>EE14N, with Chisa Ogaki. A Raspberry Pi 5 turret: a 2048-sample FFT picks out trumpet notes, G and B pan a stepper-driven platform, and D fires a solenoid-triggered Nerf blaster.</p></li>
           <li><a class="t" href="https://github.com/kuzeykantarcioglu/PL_dataset_generation">Procedural language datasets</a><p>LLM-generated procedural language examples for text understanding research.</p></li>
